@@ -73,12 +73,12 @@ func (j *Json) String() (string, error) {
 	return "", errors.New("type assertion to string failed")
 }
 
-// Int type asserts to `int`
-func (j *Json) Int() (int, error) {
-	if i, ok := (j.data).(int); ok {
+// Float64 type asserts to `float64`
+func (j *Json) Float64() (float64, error) {
+	if i, ok := (j.data).(float64); ok {
 		return i, nil
 	}
-	return -1, errors.New("type assertion to int failed")
+	return -1, errors.New("type assertion to float64 failed")
 }
 
 // Bytes type asserts to `[]byte`

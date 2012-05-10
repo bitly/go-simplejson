@@ -42,8 +42,8 @@ func (j *Json) Get(key string) *Json
 
 	js.Get("top_level").Get("dict").Get("value").Int()
 
-func (j *Json) Int() (int, error)
-    Int type asserts to `int`
+func (j *Json) Float64() (float64, error)
+    Float64 type asserts to `float64`
 
 func (j *Json) Map() (map[string]interface{}, error)
     Map type asserts to `map`
