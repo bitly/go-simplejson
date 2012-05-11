@@ -5,6 +5,11 @@ import (
 	"errors"
 )
 
+// returns the current implementation version
+func Version() string {
+	return "0.1"
+}
+
 type Json struct {
 	data interface{}
 }
@@ -79,6 +84,24 @@ func (j *Json) Float64() (float64, error) {
 		return i, nil
 	}
 	return -1, errors.New("type assertion to float64 failed")
+}
+
+// Int type asserts to `int`
+func (j *Json) Int() (int, error) {
+	if f, ok := (j.data).(float64); ok {
+		i := int(f)
+		return i, nil
+	}
+	return -1, errors.New("type assertion to int failed")
+}
+
+// Int type asserts to `int64`
+func (j *Json) Int64() (int64, error) {
+	if f, ok := (j.data).(float64); ok {
+		i := int64(f)
+		return i, nil
+	}
+	return -1, errors.New("type assertion to int failed")
 }
 
 // Bytes type asserts to `[]byte`
