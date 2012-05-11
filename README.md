@@ -10,6 +10,14 @@ a dead simple library to interact with arbitrary JSON in Go
 ### go doc
 
 ```
+FUNCTIONS
+
+func Version() string
+    returns the current implementation version
+
+
+TYPES
+
 type Json struct {
     // contains filtered or unexported fields
 }
@@ -34,6 +42,9 @@ func (j *Json) CheckGet(key string) (*Json, bool)
 func (j *Json) Encode() ([]byte, error)
     Encode returns it's marshaled data as `[]byte`
 
+func (j *Json) Float64() (float64, error)
+    Float64 type asserts to `float64`
+
 func (j *Json) Get(key string) *Json
     Get returns a pointer to a new `Json` object for `key` in it's `map`
     representation
@@ -42,8 +53,11 @@ func (j *Json) Get(key string) *Json
 
 	js.Get("top_level").Get("dict").Get("value").Int()
 
-func (j *Json) Float64() (float64, error)
-    Float64 type asserts to `float64`
+func (j *Json) Int() (int, error)
+    Int type asserts to `int`
+
+func (j *Json) Int64() (int64, error)
+    Int type asserts to `int64`
 
 func (j *Json) Map() (map[string]interface{}, error)
     Map type asserts to `map`
