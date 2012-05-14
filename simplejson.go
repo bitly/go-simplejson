@@ -3,11 +3,12 @@ package simplejson
 import (
 	"encoding/json"
 	"errors"
+	"log"
 )
 
 // returns the current implementation version
 func Version() string {
-	return "0.1"
+	return "0.2"
 }
 
 type Json struct {
@@ -70,6 +71,14 @@ func (j *Json) Map() (map[string]interface{}, error) {
 	return nil, errors.New("type assertion to map[string]interface{} failed")
 }
 
+// Array type asserts to an `array`
+func (j *Json) Array() ([]interface{}, error) {
+	if a, ok := (j.data).([]interface{}); ok {
+		return a, nil
+	}
+	return nil, errors.New("type assertion to []interface{} failed")
+}
+
 // String type asserts to `string`
 func (j *Json) String() (string, error) {
 	if s, ok := (j.data).(string); ok {
@@ -86,28 +95,100 @@ func (j *Json) Float64() (float64, error) {
 	return -1, errors.New("type assertion to float64 failed")
 }
 
-// Int type asserts to `int`
+// Int type asserts to `float64` then converts to `int`
 func (j *Json) Int() (int, error) {
 	if f, ok := (j.data).(float64); ok {
-		i := int(f)
-		return i, nil
+		return int(f), nil
 	}
-	return -1, errors.New("type assertion to int failed")
+
+	return -1, errors.New("type assertion to float64 failed")
 }
 
-// Int type asserts to `int64`
+// Int type asserts to `float64` then converts to `int64`
 func (j *Json) Int64() (int64, error) {
 	if f, ok := (j.data).(float64); ok {
-		i := int64(f)
-		return i, nil
+		return int64(f), nil
 	}
-	return -1, errors.New("type assertion to int failed")
+
+	return -1, errors.New("type assertion to float64 failed")
 }
 
 // Bytes type asserts to `[]byte`
 func (j *Json) Bytes() ([]byte, error) {
-	if b, ok := (j.data).([]byte); ok {
-		return b, nil
+	if s, ok := (j.data).(string); ok {
+		return []byte(s), nil
 	}
 	return nil, errors.New("type assertion to []byte failed")
+}
+
+// MustString guarantees the return of a `string` (with optional default)
+//
+// useful when you explicitly want a `string` in a single value return context:
+//     myFunc(js.Get("param1").MustString(), js.Get("optional_param").MustString("my_default"))
+func (j *Json) MustString(args ...string) string {
+	var def string
+
+	switch len(args) {
+	case 0:
+		break
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustString() received too many arguments %d", len(args))
+	}
+
+	s, err := j.String()
+	if err == nil {
+		return s
+	}
+
+	return def
+}
+
+// MustInt guarantees the return of an `int` (with optional default)
+//
+// useful when you explicitly want an `int` in a single value return context:
+//     myFunc(js.Get("param1").MustInt(), js.Get("optional_param").MustInt(5150))
+func (j *Json) MustInt(args ...int) int {
+	var def int
+
+	switch len(args) {
+	case 0:
+		break
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustInt() received too many arguments %d", len(args))
+	}
+
+	i, err := j.Int()
+	if err == nil {
+		return i
+	}
+
+	return def
+}
+
+// MustFloat64 guarantees the return of a `float64` (with optional default)
+//
+// useful when you explicitly want a `float64` in a single value return context:
+//     myFunc(js.Get("param1").MustFloat64(), js.Get("optional_param").MustFloat64(5.150))
+func (j *Json) MustFloat64(args ...float64) float64 {
+	var def float64
+
+	switch len(args) {
+	case 0:
+		break
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustFloat64() received too many arguments %d", len(args))
+	}
+
+	i, err := j.Float64()
+	if err == nil {
+		return i
+	}
+
+	return def
 }
