@@ -8,7 +8,7 @@ import (
 
 // returns the current implementation version
 func Version() string {
-	return "0.2"
+	return "0.3"
 }
 
 type Json struct {
@@ -77,6 +77,14 @@ func (j *Json) Array() ([]interface{}, error) {
 		return a, nil
 	}
 	return nil, errors.New("type assertion to []interface{} failed")
+}
+
+// Bool type asserts to `bool`
+func (j *Json) Bool() (bool, error) {
+	if s, ok := (j.data).(bool); ok {
+		return s, nil
+	}
+	return false, errors.New("type assertion to bool failed")
 }
 
 // String type asserts to `string`
