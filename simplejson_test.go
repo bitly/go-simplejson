@@ -20,7 +20,8 @@ func TestSimplejson(t *testing.T) {
 			"int": 10,
 			"float": 5.150,
 			"bignum": 9223372036854775807,
-			"string": "simplejson"
+			"string": "simplejson",
+            "bool": true 
 		}
 	}`))
 
@@ -54,6 +55,9 @@ func TestSimplejson(t *testing.T) {
 
 	s, _ := js.Get("test").Get("string").String()
 	assert.Equal(t, "simplejson", s)
+
+	b, _ := js.Get("test").Get("bool").Bool()
+	assert.Equal(t, true, b)
 
 	mi := js.Get("test").Get("int").MustInt()
 	assert.Equal(t, 10, mi)
