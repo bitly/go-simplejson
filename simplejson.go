@@ -6,9 +6,9 @@ import (
 	"log"
 )
 
-// returns the current implementation version
+// returns the current version
 func Version() string {
-	return "0.3"
+	return "0.4"
 }
 
 type Json struct {
@@ -150,6 +150,10 @@ func (j *Json) MustString(args ...string) string {
 		return s
 	}
 
+	if len(args) == 0 {
+		log.Panicf("MustString() failed to convert and no default specified")
+	}
+
 	return def
 }
 
@@ -174,6 +178,10 @@ func (j *Json) MustInt(args ...int) int {
 		return i
 	}
 
+	if len(args) == 0 {
+		log.Panicf("MustInt() failed to convert and no default specified")
+	}
+
 	return def
 }
 
@@ -196,6 +204,10 @@ func (j *Json) MustFloat64(args ...float64) float64 {
 	i, err := j.Float64()
 	if err == nil {
 		return i
+	}
+
+	if len(args) == 0 {
+		log.Panicf("MustFloat64() failed to convert and no default specified")
 	}
 
 	return def
