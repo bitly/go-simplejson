@@ -41,13 +41,13 @@ func (j *Json) CheckGet(key string) (*Json, bool)
     }
 
 func (j *Json) Encode() ([]byte, error)
-    Encode returns it's marshaled data as `[]byte`
+    Encode returns its marshaled data as `[]byte`
 
 func (j *Json) Float64() (float64, error)
     Float64 type asserts to `float64`
 
 func (j *Json) Get(key string) *Json
-    Get returns a pointer to a new `Json` object for `key` in it's `map`
+    Get returns a pointer to a new `Json` object for `key` in its `map`
     representation
 
     useful for chaining operations (to traverse a nested JSON):
