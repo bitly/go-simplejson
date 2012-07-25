@@ -26,13 +26,13 @@ func NewJson(body []byte) (*Json, error) {
 	return j, nil
 }
 
-// Encode returns it's marshaled data as `[]byte`
+// Encode returns its marshaled data as `[]byte`
 func (j *Json) Encode() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
 // Get returns a pointer to a new `Json` object 
-// for `key` in it's `map` representation
+// for `key` in its `map` representation
 // 
 // useful for chaining operations (to traverse a nested JSON):
 //    js.Get("top_level").Get("dict").Get("value").Int()
