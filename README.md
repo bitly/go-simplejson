@@ -8,7 +8,7 @@ a Go package to interact with arbitrary JSON
 
 ### go doc
 
-```
+```go
 FUNCTIONS
 
 func Version() string
