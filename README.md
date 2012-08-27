@@ -56,6 +56,15 @@ func (j *Json) Get(key string) *Json
 
     js.Get("top_level").Get("dict").Get("value").Int()
 
+func (j *Json) GetIndex(index int) *Json
+    GetIndex resturns a pointer to a new `Json` object for `index` in its
+    `array` representation
+
+    this is the analog to Get when accessing elements of a json array
+    instead of a json object:
+
+    js.Get("top_level").Get("array").GetIndex(1).Get("key").Int()
+
 func (j *Json) Int() (int, error)
     Int type asserts to `float64` then converts to `int`
 
