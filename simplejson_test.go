@@ -17,6 +17,8 @@ func TestSimplejson(t *testing.T) {
 	js, err := NewJson([]byte(`{ 
 		"test": { 
 			"array": [1, "2", 3],
+      "arraywithsubs": [{"subkeyone": 1},
+            {"subkeytwo": 2, "subkeythree": 3}],
 			"int": 10,
 			"float": 5.150,
 			"bignum": 9223372036854775807,
@@ -46,6 +48,16 @@ func TestSimplejson(t *testing.T) {
 		}
 		assert.Equal(t, i+1, iv)
 	}
+
+  aws := js.Get("test").Get("arraywithsubs")
+  assert.NotEqual(t, nil, aws)
+  var awsval int
+  awsval, _ = aws.GetIndex(0).Get("subkeyone").Int()
+  assert.Equal(t, 1, awsval)
+  awsval, _ = aws.GetIndex(1).Get("subkeytwo").Int()
+  assert.Equal(t, 2, awsval)
+  awsval, _ = aws.GetIndex(1).Get("subkeythree").Int()
+  assert.Equal(t, 3, awsval)
 
 	i, _ := js.Get("test").Get("int").Int()
 	assert.Equal(t, 10, i)
