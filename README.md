@@ -29,6 +29,9 @@ func NewJson(body []byte) (*Json, error)
 func (j *Json) Array() ([]interface{}, error)
     Array type asserts to an `array`
 
+func (j *Json) Bool() (bool, error)
+    Bool type asserts to `bool`
+
 func (j *Json) Bytes() ([]byte, error)
     Bytes type asserts to `[]byte`
 
@@ -74,6 +77,9 @@ func (j *Json) Int64() (int64, error)
 func (j *Json) Map() (map[string]interface{}, error)
     Map type asserts to `map`
 
+func (j *Json) MarshalJSON() ([]byte, error)
+    Implements the json.Marshaler interface.
+
 func (j *Json) MustFloat64(args ...float64) float64
     MustFloat64 guarantees the return of a `float64` (with optional default)
 
@@ -100,4 +106,7 @@ func (j *Json) MustString(args ...string) string
 
 func (j *Json) String() (string, error)
     String type asserts to `string`
+
+func (j *Json) UnmarshalJSON(p []byte) error
+    Implements the json.Unmarshaler interface.
 ```

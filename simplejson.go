@@ -19,7 +19,7 @@ type Json struct {
 // after unmarshaling `body` bytes
 func NewJson(body []byte) (*Json, error) {
 	j := new(Json)
-	err := json.Unmarshal(body, &j.data)
+	err := j.UnmarshalJSON(body)
 	if err != nil {
 		return nil, err
 	}
@@ -28,6 +28,16 @@ func NewJson(body []byte) (*Json, error) {
 
 // Encode returns its marshaled data as `[]byte`
 func (j *Json) Encode() ([]byte, error) {
+	return j.MarshalJSON()
+}
+
+// Implements the json.Unmarshaler interface.
+func (j *Json) UnmarshalJSON(p []byte) error {
+	return json.Unmarshal(p, &j.data)
+}
+
+// Implements the json.Marshaler interface.
+func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
