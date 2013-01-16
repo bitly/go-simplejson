@@ -8,7 +8,7 @@ import (
 
 // returns the current implementation version
 func Version() string {
-	return "0.4.1"
+	return "0.4.2"
 }
 
 type Json struct {
@@ -41,9 +41,9 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
-// Get returns a pointer to a new `Json` object 
+// Get returns a pointer to a new `Json` object
 // for `key` in its `map` representation
-// 
+//
 // useful for chaining operations (to traverse a nested JSON):
 //    js.Get("top_level").Get("dict").Get("value").Int()
 func (j *Json) Get(key string) *Json {
@@ -63,13 +63,13 @@ func (j *Json) Get(key string) *Json {
 // a json array instead of a json object:
 //    js.Get("top_level").Get("array").GetIndex(1).Get("key").Int()
 func (j *Json) GetIndex(index int) *Json {
-  a, err := j.Array()
-  if err == nil {
-    if len(a) > index {
-      return &Json{a[index]}
-    }
-  }
-  return &Json{nil}
+	a, err := j.Array()
+	if err == nil {
+		if len(a) > index {
+			return &Json{a[index]}
+		}
+	}
+	return &Json{nil}
 }
 
 // CheckGet returns a pointer to a new `Json` object and
@@ -153,6 +153,23 @@ func (j *Json) Bytes() ([]byte, error) {
 		return []byte(s), nil
 	}
 	return nil, errors.New("type assertion to []byte failed")
+}
+
+// StringArray type asserts to an `array` of `string`
+func (j *Json) StringArray() ([]string, error) {
+	arr, err := j.Array()
+	if err != nil {
+		return nil, err
+	}
+	retArr := make([]string, 0, len(arr))
+	for _, a := range arr {
+		s, ok := a.(string)
+		if !ok {
+			return nil, err
+		}
+		retArr = append(retArr, s)
+	}
+	return retArr, nil
 }
 
 // MustString guarantees the return of a `string` (with optional default)
