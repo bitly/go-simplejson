@@ -56,6 +56,26 @@ func (j *Json) Get(key string) *Json {
 	return &Json{nil}
 }
 
+// GetPath searches for the item as specified by the branch
+// without the need to deep dive using Get()'s.
+//
+//   js.GetPath("top_level", "dict")
+func (j *Json) GetPath(branch ...string) *Json {
+	jin := j
+	for i := range branch {
+		m, err := jin.Map()
+		if err != nil {
+			return &Json{nil}
+		}
+		if val, ok := m[branch[i]]; ok {
+			jin = &Json{val}
+		} else {
+			return &Json{nil}
+		}
+	}
+	return jin
+}
+
 // GetIndex resturns a pointer to a new `Json` object
 // for `index` in its `array` representation
 //

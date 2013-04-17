@@ -102,6 +102,12 @@ func TestSimplejson(t *testing.T) {
 	assert.Equal(t, strs[0], "asdf")
 	assert.Equal(t, strs[1], "ghjk")
 	assert.Equal(t, strs[2], "zxcv")
+
+	gp, _ := js.GetPath("test", "string").String()
+	assert.Equal(t, "simplejson", gp)
+
+	gp2, _ := js.GetPath("test", "int").Int()
+	assert.Equal(t, 10, gp2)
 }
 
 func TestStdlibInterfaces(t *testing.T) {
