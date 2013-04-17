@@ -172,6 +172,56 @@ func (j *Json) StringArray() ([]string, error) {
 	return retArr, nil
 }
 
+// MustArray guarantees the return of a `[]interface{}` (with optional default)
+//
+// useful when you want to interate over array values in a succinct manner:
+//		for i, v := range js.Get("results").MustArray() {
+//			fmt.Println(i, v)
+//		}
+func (j *Json) MustArray(args ...[]interface{}) []interface{} {
+	var def []interface{}
+	switch len(args) {
+	case 0:
+		break
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustArray() received too many arguments %d", len(args))
+	}
+
+	a, err := j.Array()
+	if err == nil {
+		return a
+	}
+
+	return def
+}
+
+// MustMap guarantees the return of a `map[string]interface{}` (with optional default)
+//
+// useful when you want to interate over map values in a succinct manner:
+//		for k, v := range js.Get("dictionary").MustMap() {
+//			fmt.Println(k, v)
+//		}
+func (j *Json) MustMap(args ...map[string]interface{}) map[string]interface{} {
+	var def map[string]interface{}
+	switch len(args) {
+	case 0:
+		break
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustMap() received too many arguments %d", len(args))
+	}
+
+	a, err := j.Map()
+	if err == nil {
+		return a
+	}
+
+	return def
+}
+
 // MustString guarantees the return of a `string` (with optional default)
 //
 // useful when you explicitly want a `string` in a single value return context:
