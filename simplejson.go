@@ -41,6 +41,16 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
+// Set modifies `Json` map by `key` and `value`
+// Useful for changing single key/value in a `Json` object easily.
+func (j *Json) Set(key string, val interface{}) {
+	m, err := j.Map()
+	if err != nil {
+		return
+	}
+	m[key] = val
+}
+
 // Get returns a pointer to a new `Json` object
 // for `key` in its `map` representation
 //
