@@ -45,10 +45,10 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 // Useful for changing single key/value in a `Json` object easily.
 func (j *Json) Set(key string, val interface{}) {
 	m, err := j.Map()
-	if err == nil {
-		m[key] = val
-		j.data = m
+	if err != nil {
+		return
 	}
+	m[key] = val
 }
 
 // Get returns a pointer to a new `Json` object
