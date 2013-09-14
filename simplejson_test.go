@@ -43,8 +43,10 @@ func TestSimplejson(t *testing.T) {
 	for i, v := range arr {
 		var iv int
 		switch v.(type) {
-		case float64:
-			iv = int(v.(float64))
+		case json.Number:
+			i64, err := v.(json.Number).Int64()
+			assert.Equal(t, nil, err)
+			iv = int(i64)
 		case string:
 			iv, _ = strconv.Atoi(v.(string))
 		}
@@ -86,13 +88,13 @@ func TestSimplejson(t *testing.T) {
 	assert.Equal(t, "fyea", ms2)
 
 	ma := js.Get("test").Get("array").MustArray()
-	assert.Equal(t, ma, []interface{}{float64(1), "2", float64(3)})
+	assert.Equal(t, ma, []interface{}{json.Number("1"), "2", json.Number("3")})
 
 	ma2 := js.Get("test").Get("missing_array").MustArray([]interface{}{"1", 2, "3"})
 	assert.Equal(t, ma2, []interface{}{"1", 2, "3"})
 
 	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
-	assert.Equal(t, mm, map[string]interface{}{"subkeyone": float64(1)})
+	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
 
 	mm2 := js.Get("test").Get("missing_map").MustMap(map[string]interface{}{"found": false})
 	assert.Equal(t, mm2, map[string]interface{}{"found": false})
