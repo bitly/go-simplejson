@@ -5,7 +5,6 @@ import (
 	"github.com/bmizerany/assert"
 	"io/ioutil"
 	"log"
-	"strconv"
 	"testing"
 )
 
@@ -37,19 +36,6 @@ func TestSimplejson(t *testing.T) {
 
 	_, ok = js.CheckGet("missing_key")
 	assert.Equal(t, false, ok)
-
-	arr, _ := js.Get("test").Get("array").Array()
-	assert.NotEqual(t, nil, arr)
-	for i, v := range arr {
-		var iv int
-		switch v.(type) {
-		case float64:
-			iv = int(v.(float64))
-		case string:
-			iv, _ = strconv.Atoi(v.(string))
-		}
-		assert.Equal(t, i+1, iv)
-	}
 
 	aws := js.Get("test").Get("arraywithsubs")
 	assert.NotEqual(t, nil, aws)
@@ -85,14 +71,8 @@ func TestSimplejson(t *testing.T) {
 	ms2 := js.Get("test").Get("missing_string").MustString("fyea")
 	assert.Equal(t, "fyea", ms2)
 
-	ma := js.Get("test").Get("array").MustArray()
-	assert.Equal(t, ma, []interface{}{float64(1), "2", float64(3)})
-
 	ma2 := js.Get("test").Get("missing_array").MustArray([]interface{}{"1", 2, "3"})
 	assert.Equal(t, ma2, []interface{}{"1", 2, "3"})
-
-	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
-	assert.Equal(t, mm, map[string]interface{}{"subkeyone": float64(1)})
 
 	mm2 := js.Get("test").Get("missing_map").MustMap(map[string]interface{}{"found": false})
 	assert.Equal(t, mm2, map[string]interface{}{"found": false})
