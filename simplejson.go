@@ -179,9 +179,9 @@ func (j *Json) StringArray() ([]string, error) {
 //		}
 func (j *Json) MustArray(args ...[]interface{}) []interface{} {
 	var def []interface{}
+
 	switch len(args) {
 	case 0:
-		break
 	case 1:
 		def = args[0]
 	default:
@@ -204,9 +204,9 @@ func (j *Json) MustArray(args ...[]interface{}) []interface{} {
 //		}
 func (j *Json) MustMap(args ...map[string]interface{}) map[string]interface{} {
 	var def map[string]interface{}
+
 	switch len(args) {
 	case 0:
-		break
 	case 1:
 		def = args[0]
 	default:
@@ -230,7 +230,6 @@ func (j *Json) MustString(args ...string) string {
 
 	switch len(args) {
 	case 0:
-		break
 	case 1:
 		def = args[0]
 	default:
@@ -254,7 +253,6 @@ func (j *Json) MustInt(args ...int) int {
 
 	switch len(args) {
 	case 0:
-		break
 	case 1:
 		def = args[0]
 	default:
@@ -278,16 +276,38 @@ func (j *Json) MustFloat64(args ...float64) float64 {
 
 	switch len(args) {
 	case 0:
-		break
 	case 1:
 		def = args[0]
 	default:
 		log.Panicf("MustFloat64() received too many arguments %d", len(args))
 	}
 
-	i, err := j.Float64()
+	f, err := j.Float64()
 	if err == nil {
-		return i
+		return f
+	}
+
+	return def
+}
+
+// MustBool guarantees the return of a `bool` (with optional default)
+//
+// useful when you explicitly want a `bool` in a single value return context:
+//     myFunc(js.Get("param1").MustBool(), js.Get("optional_param").MustBool(true))
+func (j *Json) MustBool(args ...bool) bool {
+	var def bool
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustBool() received too many arguments %d", len(args))
+	}
+
+	b, err := j.Bool()
+	if err == nil {
+		return b
 	}
 
 	return def
