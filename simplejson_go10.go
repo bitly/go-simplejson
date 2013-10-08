@@ -25,7 +25,6 @@ func (j *Json) Int() (int, error) {
 	if f, ok := (j.data).(float64); ok {
 		return int(f), nil
 	}
-
 	return -1, errors.New("type assertion to float64 failed")
 }
 
@@ -34,6 +33,5 @@ func (j *Json) Int64() (int64, error) {
 	if f, ok := (j.data).(float64); ok {
 		return int64(f), nil
 	}
-
 	return -1, errors.New("type assertion to float64 failed")
 }

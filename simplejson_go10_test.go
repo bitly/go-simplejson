@@ -4,15 +4,11 @@ package simplejson
 
 import (
 	"github.com/bmizerany/assert"
-	"io/ioutil"
-	"log"
 	"strconv"
 	"testing"
 )
 
 func TestSimplejsonGo10(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
-
 	js, err := NewJson([]byte(`{ 
 		"test": { 
 			"array": [1, "2", 3],
