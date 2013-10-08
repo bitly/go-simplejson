@@ -3,16 +3,12 @@ package simplejson
 import (
 	"encoding/json"
 	"github.com/bmizerany/assert"
-	"io/ioutil"
-	"log"
 	"testing"
 )
 
 func TestSimplejson(t *testing.T) {
 	var ok bool
 	var err error
-
-	log.SetOutput(ioutil.Discard)
 
 	js, err := NewJson([]byte(`{ 
 		"test": { 
@@ -89,8 +85,14 @@ func TestSimplejson(t *testing.T) {
 	gp2, _ := js.GetPath("test", "int").Int()
 	assert.Equal(t, 10, gp2)
 
-	js.Set("test", "setTest")
-	assert.Equal(t, "setTest", js.Get("test").MustString())
+	assert.Equal(t, js.Get("test").Get("bool").MustBool(), true)
+	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
+
+	js.Set("float2", 300.0)
+	assert.Equal(t, js.Get("float2").MustFloat64(), 300.0)
+
+	js.Set("test2", "setTest")
+	assert.Equal(t, "setTest", js.Get("test2").MustString())
 }
 
 func TestStdlibInterfaces(t *testing.T) {
