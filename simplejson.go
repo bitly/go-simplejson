@@ -8,7 +8,7 @@ import (
 
 // returns the current implementation version
 func Version() string {
-	return "0.4.3"
+	return "0.5.0-alpha"
 }
 
 type Json struct {
@@ -308,6 +308,29 @@ func (j *Json) MustBool(args ...bool) bool {
 	b, err := j.Bool()
 	if err == nil {
 		return b
+	}
+
+	return def
+}
+
+// MustInt64 guarantees the return of an `int64` (with optional default)
+//
+// useful when you explicitly want an `int64` in a single value return context:
+//     myFunc(js.Get("param1").MustInt64(), js.Get("optional_param").MustInt64(5150))
+func (j *Json) MustInt64(args ...int64) int64 {
+	var def int64
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustInt64() received too many arguments %d", len(args))
+	}
+
+	i, err := j.Int64()
+	if err == nil {
+		return i
 	}
 
 	return def
