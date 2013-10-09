@@ -13,8 +13,11 @@ func TestSimplejsonGo11(t *testing.T) {
 	js, err := NewJson([]byte(`{ 
 		"test": { 
 			"array": [1, "2", 3],
-			"arraywithsubs": [{"subkeyone": 1},
-			{"subkeytwo": 2, "subkeythree": 3}]
+			"arraywithsubs": [
+				{"subkeyone": 1},
+				{"subkeytwo": 2, "subkeythree": 3}
+			],
+			"bignum": 9223372036854775807
 		}
 	}`))
 
@@ -41,4 +44,6 @@ func TestSimplejsonGo11(t *testing.T) {
 
 	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
+
+	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
 }
