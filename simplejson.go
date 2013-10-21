@@ -26,6 +26,18 @@ func NewJson(body []byte) (*Json, error) {
 	return j, nil
 }
 
+// New returns a pointer to a new, empty `Json` object
+func New() *Json {
+	return &Json{
+		data: make(map[string]interface{}),
+	}
+}
+
+// Interface returns the underlying data
+func (j *Json) Interface() interface{} {
+	return j.data
+}
+
 // Encode returns its marshaled data as `[]byte`
 func (j *Json) Encode() ([]byte, error) {
 	return j.MarshalJSON()
