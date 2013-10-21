@@ -26,6 +26,12 @@ func NewJson(body []byte) (*Json, error) {
 	return j, nil
 }
 
+// New returns a pointer to a new, empty `Json` object
+func New() *Json {
+    j, _ := NewJson([]byte("{}"))
+    return j
+}
+
 // Encode returns its marshaled data as `[]byte`
 func (j *Json) Encode() ([]byte, error) {
 	return j.MarshalJSON()
@@ -112,6 +118,12 @@ func (j *Json) CheckGet(key string) (*Json, bool) {
 		}
 	}
 	return nil, false
+}
+
+
+// Interface type asserts to `interface`
+func (j *Json) Interface() interface{}{
+    return j.data
 }
 
 // Map type asserts to `map`
