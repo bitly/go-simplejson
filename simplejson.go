@@ -81,7 +81,7 @@ func (j *Json) GetPath(branch ...string) *Json {
 	return jin
 }
 
-// GetIndex resturns a pointer to a new `Json` object
+// GetIndex returns a pointer to a new `Json` object
 // for `index` in its `array` representation
 //
 // this is the analog to Get when accessing elements of
