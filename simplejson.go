@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"strings"
 )
 
 // returns the current implementation version
@@ -59,6 +60,27 @@ func (j *Json) Get(key string) *Json {
 		}
 	}
 	return &Json{nil}
+}
+
+// Use '.' seperated key name to Get
+// e,g. DeepGet("person.wang.age")
+func (j *Json) DeepGet(key string) *Json {
+	const SEPERATOR = "."
+	if !strings.Contains(key, SEPERATOR) {
+		return j.Get(key)
+	}
+	fields := strings.Split(key, SEPERATOR)
+
+	var js *Json
+	for idx, k := range fields {
+		if idx == 0 {
+			js = j.Get(k)
+		} else {
+			js = js.Get(k)
+		}
+	}
+
+	return js
 }
 
 // GetPath searches for the item as specified by the branch

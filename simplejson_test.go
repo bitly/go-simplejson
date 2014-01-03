@@ -6,6 +6,31 @@ import (
 	"testing"
 )
 
+func TestDeepGet(t *testing.T) {
+	js, _ := NewJson([]byte(`{ 
+		"test": { 
+			"string_array": ["asdf", "ghjk", "zxcv"],
+			"array": [1, "2", 3],
+			"arraywithsubs": [{"subkeyone": 1},
+			{"subkeytwo": 2, "subkeythree": 3}],
+			"int": 10,
+			"float": 5.150,
+			"string": "fooBar",
+			"person": {
+				"age": 15
+			} 
+		}
+	}`))
+	s, _ := js.DeepGet("test.string").String()
+	assert.Equal(t, "fooBar", s)
+
+	age, _ := js.DeepGet("test.person.age").Int()
+	assert.Equal(t, 15, age)
+
+	//ping, _ := js.DeepGet("ping").String()
+	//assert.Equal(t, "exp", ping)
+}
+
 func TestSimplejson(t *testing.T) {
 	var ok bool
 	var err error
