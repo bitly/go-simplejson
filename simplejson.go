@@ -69,18 +69,8 @@ func (j *Json) DeepGet(key string) *Json {
 	if !strings.Contains(key, SEPERATOR) {
 		return j.Get(key)
 	}
-	fields := strings.Split(key, SEPERATOR)
-
-	var js *Json
-	for idx, k := range fields {
-		if idx == 0 {
-			js = j.Get(k)
-		} else {
-			js = js.Get(k)
-		}
-	}
-
-	return js
+	paths := strings.Split(key, SEPERATOR)
+    return j.GetPath(paths...)
 }
 
 // GetPath searches for the item as specified by the branch

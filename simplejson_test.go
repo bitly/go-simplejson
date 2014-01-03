@@ -27,6 +27,8 @@ func TestDeepGet(t *testing.T) {
 	age, _ := js.DeepGet("test.person.age").Int()
 	assert.Equal(t, 15, age)
 
+    t.Logf("%#v", js.GetPath("test", "person", "age"))
+
 	//ping, _ := js.DeepGet("ping").String()
 	//assert.Equal(t, "exp", ping)
 }
