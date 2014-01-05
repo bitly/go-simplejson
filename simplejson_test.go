@@ -3,10 +3,11 @@ package simplejson
 import (
 	"encoding/json"
 	"github.com/bmizerany/assert"
+	"github.com/funkygao/pretty"
 	"testing"
 )
 
-func TestDeepGet(t *testing.T) {
+func TestDeepGetAndIsNil(t *testing.T) {
 	js, _ := NewJson([]byte(`{ 
 		"test": { 
 			"string_array": ["asdf", "ghjk", "zxcv"],
@@ -27,7 +28,18 @@ func TestDeepGet(t *testing.T) {
 	age, _ := js.DeepGet("test.person.age").Int()
 	assert.Equal(t, 15, age)
 
-    t.Logf("%#v", js.GetPath("test", "person", "age"))
+	nonExist := js.DeepGet("non.exists")
+	assert.Equal(t, true, nonExist.IsNil())
+
+	t.Logf("%#v", js.GetPath("test", "person", "age"))
+	non, err := js.DeepGet("non-exists").String()
+	m, _ := js.Map()
+	t.Logf("%#v, %#v", non, err)
+	pretty.Printf("%# v\n", m)
+
+	m, _ = js.Map()
+	js.Del("test.person.age")
+	pretty.Printf("%# v\n", m)
 
 	//ping, _ := js.DeepGet("ping").String()
 	//assert.Equal(t, "exp", ping)

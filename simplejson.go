@@ -62,6 +62,31 @@ func (j *Json) Get(key string) *Json {
 	return &Json{nil}
 }
 
+func (j *Json) IsNil() bool {
+	return j.data == nil
+}
+
+func (j *Json) Del(key string) {
+	const SEPERATOR = "."
+	branch := strings.Split(key, SEPERATOR)
+	branchLen := len(branch)
+	jin := j
+	for idx, k := range branch {
+		m, err := jin.Map()
+		if err != nil {
+			return
+		}
+		if val, ok := m[k]; ok {
+			jin = &Json{val}
+			if idx == branchLen-1 {
+				delete(m, k)
+			}
+		} else {
+			return
+		}
+	}
+}
+
 // Use '.' seperated key name to Get
 // e,g. DeepGet("person.wang.age")
 func (j *Json) DeepGet(key string) *Json {
@@ -70,7 +95,7 @@ func (j *Json) DeepGet(key string) *Json {
 		return j.Get(key)
 	}
 	paths := strings.Split(key, SEPERATOR)
-    return j.GetPath(paths...)
+	return j.GetPath(paths...)
 }
 
 // GetPath searches for the item as specified by the branch
