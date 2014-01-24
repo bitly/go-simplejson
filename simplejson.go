@@ -91,10 +91,11 @@ func (j *Json) Del(key string) {
 // e,g. DeepGet("person.wang.age")
 func (j *Json) DeepGet(key string) *Json {
 	const SEPERATOR = "."
-	if !strings.Contains(key, SEPERATOR) {
-		return j.Get(key)
-	}
 	paths := strings.Split(key, SEPERATOR)
+	if len(paths) == 1 {
+		return j.Get(paths[0])
+	}
+
 	return j.GetPath(paths...)
 }
 
