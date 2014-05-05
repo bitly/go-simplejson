@@ -37,8 +37,8 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 }
 
 // EncodeIndent returns its marshaled data indented as `[]byte`
-// this method takes the same parameters as the json.MarshalIndent method 
-func (j * Json) EncodeIndent(prefix string, indent string) ([]byte, error){
+// this method takes the same parameters as the json.MarshalIndent method
+func (j *Json) EncodeIndent(prefix string, indent string) ([]byte, error) {
 	return json.MarshalIndent(&j.data, prefix, indent)
 }
 
