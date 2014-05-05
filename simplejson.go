@@ -133,6 +133,10 @@ func (j *Json) Map() (map[string]interface{}, error) {
 	return nil, errors.New("type assertion to map[string]interface{} failed")
 }
 
+func (j *Json) Interface() interface{}{
+	return j.data
+}
+
 // Array type asserts to an `array`
 func (j *Json) Array() ([]interface{}, error) {
 	if a, ok := (j.data).([]interface{}); ok {
