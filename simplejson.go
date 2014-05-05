@@ -19,7 +19,7 @@ type Json struct {
 // after unmarshaling `body` bytes
 func NewJson(body []byte) (*Json, error) {
 	j := new(Json)
-	err := j.UnmarshalJSON(body)
+	err := json.Unmarshal(body, &j.data)
 	if err != nil {
 		return nil, err
 	}
@@ -44,11 +44,17 @@ func (j * Json) MarshalJSONIndent(prefix string, indent string) ([]byte, error){
 // Set modifies `Json` map by `key` and `value`
 // Useful for changing single key/value in a `Json` object easily.
 func (j *Json) Set(key string, val interface{}) {
+	switch val.(type){
+	case Json: 
+		val = val.(Json).data
+	default:
+        }
 	m, err := j.Map()
 	if err != nil {
 		return
 	}
 	m[key] = val
+
 }
 
 // Get returns a pointer to a new `Json` object
