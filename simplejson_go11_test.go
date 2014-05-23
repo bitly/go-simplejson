@@ -17,7 +17,8 @@ func TestSimplejsonGo11(t *testing.T) {
 				{"subkeyone": 1},
 				{"subkeytwo": 2, "subkeythree": 3}
 			],
-			"bignum": 9223372036854775807
+			"bignum": 9223372036854775807,
+			"uint64": 18446744073709551615
 		}
 	}`))
 
@@ -46,4 +47,5 @@ func TestSimplejsonGo11(t *testing.T) {
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
 
 	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
+	assert.Equal(t, js.Get("test").Get("uint64").MustUint64(), uint64(18446744073709551615))
 }

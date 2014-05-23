@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"strconv"
 )
 
 // Implements the json.Unmarshaler interface.
@@ -38,7 +39,7 @@ func (j *Json) Int() (int, error) {
 	return -1, errors.New("type assertion to json.Number failed")
 }
 
-// Int type asserts to `json.Number` then converts to `int64`
+// Int64 type asserts to `json.Number` then converts to `int64`
 func (j *Json) Int64() (int64, error) {
 	if n, ok := (j.data).(json.Number); ok {
 		return n.Int64()
@@ -47,4 +48,16 @@ func (j *Json) Int64() (int64, error) {
 		return int64(f), nil
 	}
 	return -1, errors.New("type assertion to json.Number failed")
+}
+
+// Uint64 type asserts to `json.Number` then converts to `uint64`
+func (j *Json) Uint64() (uint64, error) {
+	if n, ok := (j.data).(json.Number); ok {
+		u, err := strconv.ParseUint(n.String(), 10, 64)
+		return u, err
+	}
+	if f, ok := (j.data).(float64); ok {
+		return uint64(f), nil
+	}
+	return 0, errors.New("type assertion to json.Number failed")
 }
