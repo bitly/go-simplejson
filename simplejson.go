@@ -335,3 +335,26 @@ func (j *Json) MustInt64(args ...int64) int64 {
 
 	return def
 }
+
+// MustUInt64 guarantees the return of an `uint64` (with optional default)
+//
+// useful when you explicitly want an `uint64` in a single value return context:
+//     myFunc(js.Get("param1").MustUint64(), js.Get("optional_param").MustUint64(5150))
+func (j *Json) MustUint64(args ...uint64) uint64 {
+	var def uint64
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustUint64() received too many arguments %d", len(args))
+	}
+
+	i, err := j.Uint64()
+	if err == nil {
+		return i
+	}
+
+	return def
+}
