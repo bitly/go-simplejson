@@ -30,7 +30,7 @@ func NewJson(body []byte) (*Json, error) {
 func Decode(r io.Reader) (*Json, error) {
 	j := new(Json)
 	dec := json.NewDecoder(r)
-	err := dec.Decode(j.data)
+	err := dec.Decode(&j.data)
 	return j, err
 }
 
