@@ -3,6 +3,7 @@ package simplejson
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
 )
 
@@ -24,6 +25,13 @@ func NewJson(body []byte) (*Json, error) {
 		return nil, err
 	}
 	return j, nil
+}
+
+func Decode(r io.Reader) (*Json, error) {
+	j := new(Json)
+	dec := json.NewDecoder(r)
+	err := dec.Decode(j.data)
+	return j, err
 }
 
 // Encode returns its marshaled data as `[]byte`
