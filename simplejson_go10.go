@@ -5,6 +5,7 @@ package simplejson
 import (
 	"encoding/json"
 	"errors"
+	"io"
 )
 
 // Implements the json.Unmarshaler interface.
