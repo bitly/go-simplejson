@@ -3,8 +3,47 @@ package simplejson
 import (
 	"encoding/json"
 	"github.com/bmizerany/assert"
+	"github.com/funkygao/pretty"
 	"testing"
 )
+
+func TestDeepGetAndIsNil(t *testing.T) {
+	js, _ := NewJson([]byte(`{ 
+		"test": { 
+			"string_array": ["asdf", "ghjk", "zxcv"],
+			"array": [1, "2", 3],
+			"arraywithsubs": [{"subkeyone": 1},
+			{"subkeytwo": 2, "subkeythree": 3}],
+			"int": 10,
+			"float": 5.150,
+			"string": "fooBar",
+			"person": {
+				"age": 15
+			} 
+		}
+	}`))
+	s, _ := js.DeepGet("test.string").String()
+	assert.Equal(t, "fooBar", s)
+
+	age, _ := js.DeepGet("test.person.age").Int()
+	assert.Equal(t, 15, age)
+
+	nonExist := js.DeepGet("non.exists")
+	assert.Equal(t, true, nonExist.IsNil())
+
+	t.Logf("%#v", js.GetPath("test", "person", "age"))
+	non, err := js.DeepGet("non-exists").String()
+	m, _ := js.Map()
+	t.Logf("%#v, %#v", non, err)
+	pretty.Printf("%# v\n", m)
+
+	m, _ = js.Map()
+	js.Del("test.person.age")
+	pretty.Printf("%# v\n", m)
+
+	//ping, _ := js.DeepGet("ping").String()
+	//assert.Equal(t, "exp", ping)
+}
 
 func TestSimplejson(t *testing.T) {
 	var ok bool
