@@ -3,6 +3,7 @@
 package simplejson
 
 import (
+	"bytes"
 	"github.com/bmizerany/assert"
 	"strconv"
 	"testing"
