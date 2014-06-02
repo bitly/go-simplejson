@@ -27,7 +27,7 @@ func NewJson(body []byte) (*Json, error) {
 	return j, nil
 }
 
-func FromReader(r io.Reader) (*Json, error) {
+func NewFromReader(r io.Reader) (*Json, error) {
 	j := new(Json)
 	dec := json.NewDecoder(r)
 	err := dec.Decode(&j.data)
