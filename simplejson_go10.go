@@ -20,6 +20,15 @@ func (j *Json) Float64() (float64, error) {
 	return -1, errors.New("type assertion to float64 failed")
 }
 
+//NewFromReader returns a *Json by
+//decoding from an io.Reader
+func NewFromReader(r io.Reader) (*Json, error) {
+	j := new(Json)
+	dec := json.NewDecoder(r)
+	err := dec.Decode(&j.data)
+	return j, err
+}
+
 // Int type asserts to `float64` then converts to `int`
 func (j *Json) Int() (int, error) {
 	if f, ok := (j.data).(float64); ok {
