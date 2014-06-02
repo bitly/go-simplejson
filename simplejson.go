@@ -31,6 +31,11 @@ func (j *Json) Encode() ([]byte, error) {
 	return j.MarshalJSON()
 }
 
+// EncodePretty returns its marshaled data as `[]byte` with indentation
+func (j *Json) EncodePretty() ([]byte, error) {
+	return json.MarshalIndent(&j.data, "", "  ")
+}
+
 // Implements the json.Marshaler interface.
 func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
@@ -44,6 +49,15 @@ func (j *Json) Set(key string, val interface{}) {
 		return
 	}
 	m[key] = val
+}
+
+// Del modifies `Json` map by deleting `key` if it is present.
+func (j *Json) Del(key string) {
+	m, err := j.Map()
+	if err != nil {
+		return
+	}
+	delete(m, key)
 }
 
 // Get returns a pointer to a new `Json` object

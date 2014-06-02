@@ -10,8 +10,8 @@ func TestSimplejson(t *testing.T) {
 	var ok bool
 	var err error
 
-	js, err := NewJson([]byte(`{ 
-		"test": { 
+	js, err := NewJson([]byte(`{
+		"test": {
 			"string_array": ["asdf", "ghjk", "zxcv"],
 			"array": [1, "2", 3],
 			"arraywithsubs": [{"subkeyone": 1},
@@ -19,7 +19,7 @@ func TestSimplejson(t *testing.T) {
 			"int": 10,
 			"float": 5.150,
 			"string": "simplejson",
-			"bool": true 
+			"bool": true
 		}
 	}`))
 
@@ -91,6 +91,9 @@ func TestSimplejson(t *testing.T) {
 
 	js.Set("test2", "setTest")
 	assert.Equal(t, "setTest", js.Get("test2").MustString())
+
+	js.Del("test2")
+	assert.NotEqual(t, "setTest", js.Get("test2").MustString())
 }
 
 func TestStdlibInterfaces(t *testing.T) {
