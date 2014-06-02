@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"strconv"
 )
 
@@ -14,6 +15,16 @@ func (j *Json) UnmarshalJSON(p []byte) error {
 	dec := json.NewDecoder(bytes.NewBuffer(p))
 	dec.UseNumber()
 	return dec.Decode(&j.data)
+}
+
+//NewFromReader returns a *Json by
+//decoding from an io.Reader
+func NewFromReader(r io.Reader) (*Json, error) {
+	j := new(Json)
+	dec := json.NewDecoder(r)
+	dec.UseNumber()
+	err := dec.Decode(&j.data)
+	return j, err
 }
 
 // Float64 type asserts to `json.Number` then converts to `float64`
