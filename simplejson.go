@@ -63,6 +63,45 @@ func (j *Json) Set(key string, val interface{}) {
 	m[key] = val
 }
 
+// SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
+// and then finally writing in the value
+func (j *Json) SetPath(branch []string, val interface{}) {
+	if len(branch) == 0 {
+		j.data = val
+		return
+	}
+
+	// in order to insert our branch, we need map[string]interface{}
+	if _, ok := (j.data).(map[string]interface{}); !ok {
+		// have to replace with something suitable
+		j.data = make(map[string]interface{})
+	}
+	curr := j.data.(map[string]interface{})
+
+	for i := 0; i < len(branch)-1; i++ {
+		b := branch[i]
+		// key exists?
+		if _, ok := curr[b]; !ok {
+			n := make(map[string]interface{})
+			curr[b] = n
+			curr = n
+			continue
+		}
+
+		// make sure the value is the right sort of thing
+		if _, ok := curr[b].(map[string]interface{}); !ok {
+			// have to replace with something suitable
+			n := make(map[string]interface{})
+			curr[b] = n
+		}
+
+		curr = curr[b].(map[string]interface{})
+	}
+
+	// add remaining k/v
+	curr[branch[len(branch)-1]] = val
+}
+
 // Del modifies `Json` map by deleting `key` if it is present.
 func (j *Json) Del(key string) {
 	m, err := j.Map()
