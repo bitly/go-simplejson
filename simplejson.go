@@ -93,16 +93,8 @@ func (j *Json) Get(key string) *Json {
 //   js.GetPath("top_level", "dict")
 func (j *Json) GetPath(branch ...string) *Json {
 	jin := j
-	for i := range branch {
-		m, err := jin.Map()
-		if err != nil {
-			return &Json{nil}
-		}
-		if val, ok := m[branch[i]]; ok {
-			jin = &Json{val}
-		} else {
-			return &Json{nil}
-		}
+	for _, p := range branch {
+		jin = jin.Get(p)
 	}
 	return jin
 }
