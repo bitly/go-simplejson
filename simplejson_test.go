@@ -2,8 +2,9 @@ package simplejson
 
 import (
 	"encoding/json"
-	"github.com/bmizerany/assert"
 	"testing"
+
+	"github.com/bmizerany/assert"
 )
 
 func TestSimplejson(t *testing.T) {
@@ -20,7 +21,8 @@ func TestSimplejson(t *testing.T) {
 			"int": 10,
 			"float": 5.150,
 			"string": "simplejson",
-			"bool": true
+			"bool": true,
+			"sub_obj": {"a": 1}
 		}
 	}`))
 
@@ -101,6 +103,12 @@ func TestSimplejson(t *testing.T) {
 
 	js.Del("test2")
 	assert.NotEqual(t, "setTest", js.Get("test2").MustString())
+
+	js.Get("test").Get("sub_obj").Set("a", 2)
+	assert.Equal(t, 2, js.Get("test").Get("sub_obj").Get("a").MustInt())
+
+	js.GetPath("test", "sub_obj").Set("a", 3)
+	assert.Equal(t, 3, js.GetPath("test", "sub_obj", "a").MustInt())
 }
 
 func TestStdlibInterfaces(t *testing.T) {
