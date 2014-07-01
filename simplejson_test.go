@@ -135,3 +135,101 @@ func TestStdlibInterfaces(t *testing.T) {
 	assert.Equal(t, nil, json.Unmarshal(p, val2))
 	assert.Equal(t, val, val2) // stable
 }
+
+func TestSet(t *testing.T) {
+	js, err := NewJson([]byte(`{}`))
+	assert.Equal(t, nil, err)
+
+	js.Set("baz", "bing")
+
+	s, err := js.GetPath("baz").String()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "bing", s)
+}
+
+func TestReplace(t *testing.T) {
+	js, err := NewJson([]byte(`{}`))
+	assert.Equal(t, nil, err)
+
+	err = js.UnmarshalJSON([]byte(`{"baz":"bing"}`))
+	assert.Equal(t, nil, err)
+
+	s, err := js.GetPath("baz").String()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "bing", s)
+}
+
+func TestSetPath(t *testing.T) {
+	js, err := NewJson([]byte(`{}`))
+	assert.Equal(t, nil, err)
+
+	js.SetPath([]string{"foo", "bar"}, "baz")
+
+	s, err := js.GetPath("foo", "bar").String()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "baz", s)
+}
+
+func TestSetPathNoPath(t *testing.T) {
+	js, err := NewJson([]byte(`{"some":"data","some_number":1.0,"some_bool":false}`))
+	assert.Equal(t, nil, err)
+
+	f := js.GetPath("some_number").MustFloat64(99.0)
+	assert.Equal(t, f, 1.0)
+
+	js.SetPath([]string{}, map[string]interface{}{"foo": "bar"})
+
+	s, err := js.GetPath("foo").String()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "bar", s)
+
+	f = js.GetPath("some_number").MustFloat64(99.0)
+	assert.Equal(t, f, 99.0)
+}
+
+func TestPathWillAugmentExisting(t *testing.T) {
+	js, err := NewJson([]byte(`{"this":{"a":"aa","b":"bb","c":"cc"}}`))
+	assert.Equal(t, nil, err)
+
+	js.SetPath([]string{"this", "d"}, "dd")
+
+	cases := []struct {
+		path    []string
+		outcome string
+	}{
+		{
+			path:    []string{"this", "a"},
+			outcome: "aa",
+		},
+		{
+			path:    []string{"this", "b"},
+			outcome: "bb",
+		},
+		{
+			path:    []string{"this", "c"},
+			outcome: "cc",
+		},
+		{
+			path:    []string{"this", "d"},
+			outcome: "dd",
+		},
+	}
+
+	for _, tc := range cases {
+		s, err := js.GetPath(tc.path...).String()
+		assert.Equal(t, nil, err)
+		assert.Equal(t, tc.outcome, s)
+	}
+}
+
+func TestPathWillOverwriteExisting(t *testing.T) {
+	// notice how "a" is 0.1 - but then we'll try to set at path a, foo
+	js, err := NewJson([]byte(`{"this":{"a":0.1,"b":"bb","c":"cc"}}`))
+	assert.Equal(t, nil, err)
+
+	js.SetPath([]string{"this", "a", "foo"}, "bar")
+
+	s, err := js.GetPath("this", "a", "foo").String()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "bar", s)
+}
