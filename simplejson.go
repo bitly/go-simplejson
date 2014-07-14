@@ -190,6 +190,32 @@ func (j *Json) CheckGet(key string) (*Json, bool) {
 	return nil, false
 }
 
+// MapJson returns a copy of a Json map, but with values as Json objects
+func (j *Json) MapJson() (map[string]*Json, error) {
+	m, err := j.Map()
+	if err != nil {
+		return nil, err
+	}
+	jm := make(map[string]*Json)
+	for key, val := range m {
+		jm[key] = &Json{val}
+	}
+	return jm, nil
+}
+
+// ArrayJson splits a Json array into individual Jsons
+func (j *Json) ArrayJson() ([]*Json, error) {
+	a, err := j.Array()
+	if err != nil {
+		return nil, err
+	}
+	ja := make([]*Json, len(a))
+	for key, val := range a {
+		ja[key] = &Json{val}
+	}
+	return ja, nil
+}
+
 // Map type asserts to `map`
 func (j *Json) Map() (map[string]interface{}, error) {
 	if m, ok := (j.data).(map[string]interface{}); ok {
