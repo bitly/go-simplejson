@@ -93,6 +93,12 @@ func TestSimplejson(t *testing.T) {
 	gp2, _ := js.GetPath("test", "int").Int()
 	assert.Equal(t, 10, gp2)
 
+	gpa, _ := js.GetPathAny("test", "string_array", 0).String()
+	assert.Equal(t, "asdf", gpa)
+
+	gpa2, _ := js.GetPathAny("test", "arraywithsubs", 1, "subkeythree").Int()
+	assert.Equal(t, 3, gpa2)
+
 	assert.Equal(t, js.Get("test").Get("bool").MustBool(), true)
 
 	js.Set("float2", 300.0)

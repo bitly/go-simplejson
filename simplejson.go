@@ -154,6 +154,25 @@ func (j *Json) GetIndex(index int) *Json {
 	return &Json{nil}
 }
 
+// GetPathAny is like GetPath, except it can also go through arrays
+// using GetIndex().
+//
+//   js.GetPathAny("top_level", "entries", 3, "dict")
+func (j *Json) GetPathAny(branch ...interface{}) *Json {
+	jin := j
+	for _, p := range branch {
+		switch p.(type) {
+		case string:
+			jin = jin.Get(p.(string))
+		case int:
+			jin = jin.GetIndex(p.(int))
+		default:
+			jin = &Json{nil}
+		}
+	}
+	return jin
+}
+
 // CheckGet returns a pointer to a new `Json` object and
 // a `bool` identifying success or failure
 //
