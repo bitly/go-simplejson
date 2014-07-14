@@ -190,8 +190,8 @@ func (j *Json) CheckGet(key string) (*Json, bool) {
 	return nil, false
 }
 
-// MapJson returns a copy of a Json map, but with values as Json objects
-func (j *Json) MapJson() (map[string]*Json, error) {
+// JsonMap returns a copy of a Json map, but with values as Jsons
+func (j *Json) JsonMap() (map[string]*Json, error) {
 	m, err := j.Map()
 	if err != nil {
 		return nil, err
@@ -203,8 +203,8 @@ func (j *Json) MapJson() (map[string]*Json, error) {
 	return jm, nil
 }
 
-// ArrayJson splits a Json array into individual Jsons
-func (j *Json) ArrayJson() ([]*Json, error) {
+// JsonArray returns a copy of an array, but with each value as a Json
+func (j *Json) JsonArray() ([]*Json, error) {
 	a, err := j.Array()
 	if err != nil {
 		return nil, err
