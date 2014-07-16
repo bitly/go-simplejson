@@ -277,6 +277,46 @@ func (j *Json) StringArray() ([]string, error) {
 	return retArr, nil
 }
 
+// MustJsonArray guarantees the return of a `[]interface{}` (with optional default)
+func (j *Json) MustJsonArray(args ...[]*Json) []*Json {
+	var def []*Json
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustJsonArray() received too many arguments %d", len(args))
+	}
+
+	a, err := j.JsonArray()
+	if err == nil {
+		return a
+	}
+
+	return def
+}
+
+// MustJsonMap guarantees the return of a `map[string]interface{}` (with optional default)
+func (j *Json) MustJsonMap(args ...map[string]*Json) map[string]*Json {
+	var def map[string]*Json
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustJsonMap() received too many arguments %d", len(args))
+	}
+
+	a, err := j.JsonMap()
+	if err == nil {
+		return a
+	}
+
+	return def
+}
+
 // MustArray guarantees the return of a `[]interface{}` (with optional default)
 //
 // useful when you want to interate over array values in a succinct manner:

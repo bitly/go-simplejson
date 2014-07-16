@@ -125,6 +125,12 @@ func TestSimplejson(t *testing.T) {
 
 	js.GetPath("test", "sub_obj").Set("a", 3)
 	assert.Equal(t, 3, js.GetPath("test", "sub_obj", "a").MustInt())
+	
+	jmm:= js.Get("missing_map").MustJsonMap(map[string]*Json{"js1":js})
+	assert.Equal(t, js, jmm["js1"])
+
+	jma := js.GetPath("missing_array").MustJsonArray([]*Json{js})
+	assert.Equal(t, js, jma[0])
 }
 
 func TestStdlibInterfaces(t *testing.T) {
