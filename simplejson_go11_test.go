@@ -47,7 +47,7 @@ func TestNewFromReader(t *testing.T) {
 	ma := js.Get("test").Get("array").MustArray()
 	assert.Equal(t, ma, []interface{}{json.Number("1"), "2", json.Number("3")})
 
-	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
+	mm := js.Get("test").Get("arraywithsubs").Get(0).MustMap()
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
 
 	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
@@ -88,7 +88,7 @@ func TestSimplejsonGo11(t *testing.T) {
 	ma := js.Get("test").Get("array").MustArray()
 	assert.Equal(t, ma, []interface{}{json.Number("1"), "2", json.Number("3")})
 
-	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
+	mm := js.Get("test").Get("arraywithsubs").Get(0).MustMap()
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
 
 	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))

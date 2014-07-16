@@ -111,76 +111,10 @@ func (j *Json) Del(key string) {
 	delete(m, key)
 }
 
-// Get returns a pointer to a new `Json` object
+// getKey returns a pointer to a new `Json` object
 // for `key` in its `map` representation
-//
-// useful for chaining operations (to traverse a nested JSON):
-//    js.Get("top_level").Get("dict").Get("value").Int()
-func (j *Json) Get(key string) *Json {
-	m, err := j.Map()
-	if err == nil {
-		if val, ok := m[key]; ok {
-			return &Json{val}
-		}
-	}
-	return &Json{nil}
-}
-
-// GetPath searches for the item as specified by the branch
-// without the need to deep dive using Get()'s.
-//
-//   js.GetPath("top_level", "dict")
-func (j *Json) GetPath(branch ...string) *Json {
-	jin := j
-	for _, p := range branch {
-		jin = jin.Get(p)
-	}
-	return jin
-}
-
-// GetIndex returns a pointer to a new `Json` object
-// for `index` in its `array` representation
-//
-// this is the analog to Get when accessing elements of
-// a json array instead of a json object:
-//    js.Get("top_level").Get("array").GetIndex(1).Get("key").Int()
-func (j *Json) GetIndex(index int) *Json {
-	a, err := j.Array()
-	if err == nil {
-		if len(a) > index {
-			return &Json{a[index]}
-		}
-	}
-	return &Json{nil}
-}
-
-// GetPathAny is like GetPath, except it can also go through arrays
-// using GetIndex().
-//
-//   js.GetPathAny("top_level", "entries", 3, "dict")
-func (j *Json) GetPathAny(branch ...interface{}) *Json {
-	jin := j
-	for _, p := range branch {
-		switch p.(type) {
-		case string:
-			jin = jin.Get(p.(string))
-		case int:
-			jin = jin.GetIndex(p.(int))
-		default:
-			jin = &Json{nil}
-		}
-	}
-	return jin
-}
-
-// CheckGet returns a pointer to a new `Json` object and
-// a `bool` identifying success or failure
-//
-// useful for chained operations when success is important:
-//    if data, ok := js.Get("top_level").CheckGet("inner"); ok {
-//        log.Println(data)
-//    }
-func (j *Json) CheckGet(key string) (*Json, bool) {
+// and a bool identifying success or failure
+func (j *Json) getKey(key string) (*Json, bool) {
 	m, err := j.Map()
 	if err == nil {
 		if val, ok := m[key]; ok {
@@ -188,6 +122,57 @@ func (j *Json) CheckGet(key string) (*Json, bool) {
 		}
 	}
 	return nil, false
+}
+
+// getIndex returns a pointer to a new `Json` object
+// for `index` in its `array` representation
+// and a bool identifying success or failure
+func (j *Json) getIndex(index int) (*Json, bool) {
+	a, err := j.Array()
+	if err == nil {
+		if len(a) > index {
+			return &Json{a[index]}, true
+		}
+	}
+	return nil, false
+}
+
+// Get searches for the item as specified by the branch
+// within a nested Json and returns a new Json pointer
+// the pointer is always a valid Json, allowing for chained operations
+//
+//   newJs := js.Get("top_level", "entries", 3, "dict")
+func (j *Json) Get(branch ...interface{}) *Json {
+	jin, ok := j.CheckGet(branch...)
+	if ok {
+		return jin
+	} else {
+		return &Json{nil}
+	}
+}
+
+// CheckGet is like Get, except it also returns a bool
+// indicating whenever the branch was found or not
+// the Json pointer mai be nil
+//
+//   newJs, ok := js.Get("top_level", "entries", 3, "dict")
+func (j *Json) CheckGet(branch ...interface{}) (*Json, bool) {
+	jin := j
+	var ok bool
+	for _, p := range branch {
+		switch p.(type) {
+		case string:
+			jin, ok = jin.getKey(p.(string))
+		case int:
+			jin, ok = jin.getIndex(p.(int))
+		default:
+			ok = false
+		}
+		if !ok {
+			return nil, false
+		}
+	}
+	return jin, true
 }
 
 // JsonMap returns a copy of a Json map, but with values as Jsons
