@@ -146,9 +146,8 @@ func (j *Json) Get(branch ...interface{}) *Json {
 	jin, ok := j.CheckGet(branch...)
 	if ok {
 		return jin
-	} else {
-		return &Json{nil}
 	}
+	return &Json{nil}
 }
 
 // CheckGet is like Get, except it also returns a bool
