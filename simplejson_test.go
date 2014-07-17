@@ -75,18 +75,6 @@ func TestSimplejson(t *testing.T) {
 	mm2 := js.Get("test").Get("missing_map").MustMap(map[string]interface{}{"found": false})
 	assert.Equal(t, mm2, map[string]interface{}{"found": false})
 
-	strs, err := js.Get("test").Get("string_array").StringArray()
-	assert.Equal(t, err, nil)
-	assert.Equal(t, strs[0], "asdf")
-	assert.Equal(t, strs[1], "ghjk")
-	assert.Equal(t, strs[2], "zxcv")
-
-	strs2, err := js.Get("test").Get("string_array_null").StringArray()
-	assert.Equal(t, err, nil)
-	assert.Equal(t, strs2[0], "abc")
-	assert.Equal(t, strs2[1], "")
-	assert.Equal(t, strs2[2], "efg")
-
 	gp, _ := js.Get("test", "string").String()
 	assert.Equal(t, "simplejson", gp)
 
