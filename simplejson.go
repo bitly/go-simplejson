@@ -33,8 +33,8 @@ func New() *Json {
 	}
 }
 
-// CheckInterface returns the underlying data
-func (j *Json) CheckInterface() interface{} {
+// Interface returns the underlying data
+func (j *Json) Interface() interface{} {
 	return j.data
 }
 
