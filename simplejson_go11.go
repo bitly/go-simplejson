@@ -27,8 +27,8 @@ func NewFromReader(r io.Reader) (*Json, error) {
 	return j, err
 }
 
-// Float64 coerces into a float64
-func (j *Json) Float64() (float64, error) {
+// CheckFloat64 coerces into a float64
+func (j *Json) CheckFloat64() (float64, error) {
 	switch j.data.(type) {
 	case json.Number:
 		return j.data.(json.Number).Float64()
@@ -42,8 +42,8 @@ func (j *Json) Float64() (float64, error) {
 	return 0, errors.New("invalid value type")
 }
 
-// Int coerces into an int
-func (j *Json) Int() (int, error) {
+// CheckInt coerces into an int
+func (j *Json) CheckInt() (int, error) {
 	switch j.data.(type) {
 	case json.Number:
 		i, err := j.data.(json.Number).Int64()
@@ -58,8 +58,8 @@ func (j *Json) Int() (int, error) {
 	return 0, errors.New("invalid value type")
 }
 
-// Int64 coerces into an int64
-func (j *Json) Int64() (int64, error) {
+// CheckInt64 coerces into an int64
+func (j *Json) CheckInt64() (int64, error) {
 	switch j.data.(type) {
 	case json.Number:
 		return j.data.(json.Number).Int64()
@@ -73,8 +73,8 @@ func (j *Json) Int64() (int64, error) {
 	return 0, errors.New("invalid value type")
 }
 
-// Uint64 coerces into an uint64
-func (j *Json) Uint64() (uint64, error) {
+// CheckUint64 coerces into an uint64
+func (j *Json) CheckUint64() (uint64, error) {
 	switch j.data.(type) {
 	case json.Number:
 		return strconv.ParseUint(j.data.(json.Number).String(), 10, 64)

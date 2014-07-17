@@ -26,7 +26,7 @@ func TestNewFromReader(t *testing.T) {
 	assert.NotEqual(t, nil, js)
 	assert.Equal(t, nil, err)
 
-	arr, _ := js.Get("test").Get("array").Array()
+	arr, _ := js.Get("test").Get("array").CheckArray()
 	assert.NotEqual(t, nil, arr)
 	for i, v := range arr {
 		var iv int
@@ -39,13 +39,13 @@ func TestNewFromReader(t *testing.T) {
 		assert.Equal(t, i+1, iv)
 	}
 
-	ma := js.Get("test").Get("array").MustArray()
+	ma := js.Get("test").Get("array").Array()
 	assert.Equal(t, ma, []interface{}{float64(1), "2", float64(3)})
 
-	mm := js.Get("test").Get("arraywithsubs").Get(0).MustMap()
+	mm := js.Get("test").Get("arraywithsubs").Get(0).Map()
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": float64(1)})
 
-	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(8000000000))
+	assert.Equal(t, js.Get("test").Get("bignum").Int64(), int64(8000000000))
 }
 
 func TestSimplejsonGo10(t *testing.T) {
@@ -63,7 +63,7 @@ func TestSimplejsonGo10(t *testing.T) {
 	assert.NotEqual(t, nil, js)
 	assert.Equal(t, nil, err)
 
-	arr, _ := js.Get("test").Get("array").Array()
+	arr, _ := js.Get("test").Get("array").CheckArray()
 	assert.NotEqual(t, nil, arr)
 	for i, v := range arr {
 		var iv int
@@ -76,11 +76,11 @@ func TestSimplejsonGo10(t *testing.T) {
 		assert.Equal(t, i+1, iv)
 	}
 
-	ma := js.Get("test").Get("array").MustArray()
+	ma := js.Get("test").Get("array").Array()
 	assert.Equal(t, ma, []interface{}{float64(1), "2", float64(3)})
 
-	mm := js.Get("test").Get("arraywithsubs").Get(0).MustMap()
+	mm := js.Get("test").Get("arraywithsubs").Get(0).Map()
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": float64(1)})
 
-	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(8000000000))
+	assert.Equal(t, js.Get("test").Get("bignum").Int64(), int64(8000000000))
 }
