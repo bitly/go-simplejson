@@ -4,7 +4,6 @@ package simplejson
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"reflect"
 )
