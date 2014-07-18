@@ -87,13 +87,13 @@ func TestSimplejson(t *testing.T) {
 	gpa2, _ := js.Get("test", "arraywithsubs", 1, "subkeythree").CheckInt()
 	assert.Equal(t, 3, gpa2)
 
-	jm, err := js.Get("test").CheckJSONMap()
-	assert.Equal(t, err, nil)
+	jm, ok := js.Get("test").CheckJSONMap()
+	assert.Equal(t, ok, true)
 	jmbool, _ := jm["bool"].CheckBool()
 	assert.Equal(t, true, jmbool)
 
-	ja, err := js.Get("test", "string_array").CheckJSONArray()
-	assert.Equal(t, err, nil)
+	ja, ok := js.Get("test", "string_array").CheckJSONArray()
+	assert.Equal(t, ok, true)
 	jastr, _ := ja[0].CheckString()
 	assert.Equal(t, "asdf", jastr)
 
@@ -152,8 +152,8 @@ func TestSet(t *testing.T) {
 
 	js.Set("baz", "bing")
 
-	s, err := js.Get("baz").CheckString()
-	assert.Equal(t, nil, err)
+	s, ok := js.Get("baz").CheckString()
+	assert.Equal(t, true, ok)
 	assert.Equal(t, "bing", s)
 }
 
@@ -164,8 +164,8 @@ func TestReplace(t *testing.T) {
 	err = js.UnmarshalJSON([]byte(`{"baz":"bing"}`))
 	assert.Equal(t, nil, err)
 
-	s, err := js.Get("baz").CheckString()
-	assert.Equal(t, nil, err)
+	s, ok := js.Get("baz").CheckString()
+	assert.Equal(t, true, ok)
 	assert.Equal(t, "bing", s)
 }
 
@@ -175,8 +175,8 @@ func TestSetPath(t *testing.T) {
 
 	js.SetPath([]string{"foo", "bar"}, "baz")
 
-	s, err := js.Get("foo", "bar").CheckString()
-	assert.Equal(t, nil, err)
+	s, ok := js.Get("foo", "bar").CheckString()
+	assert.Equal(t, true, ok)
 	assert.Equal(t, "baz", s)
 }
 
@@ -189,8 +189,8 @@ func TestSetPathNoPath(t *testing.T) {
 
 	js.SetPath([]string{}, map[string]interface{}{"foo": "bar"})
 
-	s, err := js.Get("foo").CheckString()
-	assert.Equal(t, nil, err)
+	s, ok := js.Get("foo").CheckString()
+	assert.Equal(t, true, ok)
 	assert.Equal(t, "bar", s)
 
 	f = js.Get("some_number").Float64(99.0)
@@ -226,8 +226,8 @@ func TestPathWillAugmentExisting(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		s, err := js.Get(tc.path...).CheckString()
-		assert.Equal(t, nil, err)
+		s, ok := js.Get(tc.path...).CheckString()
+		assert.Equal(t, true, ok)
 		assert.Equal(t, tc.outcome, s)
 	}
 }
@@ -239,7 +239,7 @@ func TestPathWillOverwriteExisting(t *testing.T) {
 
 	js.SetPath([]string{"this", "a", "foo"}, "bar")
 
-	s, err := js.Get("this", "a", "foo").CheckString()
-	assert.Equal(t, nil, err)
+	s, ok := js.Get("this", "a", "foo").CheckString()
+	assert.Equal(t, true, ok)
 	assert.Equal(t, "bar", s)
 }

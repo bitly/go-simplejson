@@ -2,7 +2,6 @@ package simplejson
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 )
 
@@ -56,8 +55,8 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 // Set modifies `Json` map by `key` and `value`
 // Useful for changing single key/value in a `Json` object easily.
 func (j *Json) Set(key string, val interface{}) {
-	m, err := j.CheckMap()
-	if err != nil {
+	m, ok := j.CheckMap()
+	if !ok {
 		return
 	}
 	m[key] = val
@@ -104,8 +103,8 @@ func (j *Json) SetPath(branch []string, val interface{}) {
 
 // Del modifies `Json` map by deleting `key` if it is present.
 func (j *Json) Del(key string) {
-	m, err := j.CheckMap()
-	if err != nil {
+	m, ok := j.CheckMap()
+	if !ok {
 		return
 	}
 	delete(m, key)
@@ -115,8 +114,8 @@ func (j *Json) Del(key string) {
 // for `key` in its `map` representation
 // and a bool identifying success or failure
 func (j *Json) getKey(key string) (*Json, bool) {
-	m, err := j.CheckMap()
-	if err == nil {
+	m, ok := j.CheckMap()
+	if ok {
 		if val, ok := m[key]; ok {
 			return &Json{val}, true
 		}
@@ -128,8 +127,8 @@ func (j *Json) getKey(key string) (*Json, bool) {
 // for `index` in its `array` representation
 // and a bool identifying success or failure
 func (j *Json) getIndex(index int) (*Json, bool) {
-	a, err := j.CheckArray()
-	if err == nil {
+	a, ok := j.CheckArray()
+	if ok {
 		if len(a) > index {
 			return &Json{a[index]}, true
 		}
@@ -175,61 +174,61 @@ func (j *Json) CheckGet(branch ...interface{}) (*Json, bool) {
 }
 
 // CheckJSONMap returns a copy of a Json map, but with values as Jsons
-func (j *Json) CheckJSONMap() (map[string]*Json, error) {
-	m, err := j.CheckMap()
-	if err != nil {
-		return nil, err
+func (j *Json) CheckJSONMap() (map[string]*Json, bool) {
+	m, ok := j.CheckMap()
+	if !ok {
+		return nil, false
 	}
 	jm := make(map[string]*Json)
 	for key, val := range m {
 		jm[key] = &Json{val}
 	}
-	return jm, nil
+	return jm, true
 }
 
 // CheckJSONArray returns a copy of an array, but with each value as a Json
-func (j *Json) CheckJSONArray() ([]*Json, error) {
-	a, err := j.CheckArray()
-	if err != nil {
-		return nil, err
+func (j *Json) CheckJSONArray() ([]*Json, bool) {
+	a, ok := j.CheckArray()
+	if !ok {
+		return nil, false
 	}
 	ja := make([]*Json, len(a))
 	for key, val := range a {
 		ja[key] = &Json{val}
 	}
-	return ja, nil
+	return ja, true
 }
 
 // CheckMap type asserts to `map`
-func (j *Json) CheckMap() (map[string]interface{}, error) {
+func (j *Json) CheckMap() (map[string]interface{}, bool) {
 	if m, ok := (j.data).(map[string]interface{}); ok {
-		return m, nil
+		return m, true
 	}
-	return nil, errors.New("type assertion to map[string]interface{} failed")
+	return nil, false
 }
 
 // CheckArray type asserts to an `array`
-func (j *Json) CheckArray() ([]interface{}, error) {
+func (j *Json) CheckArray() ([]interface{}, bool) {
 	if a, ok := (j.data).([]interface{}); ok {
-		return a, nil
+		return a, true
 	}
-	return nil, errors.New("type assertion to []interface{} failed")
+	return nil, false
 }
 
 // CheckBool type asserts to `bool`
-func (j *Json) CheckBool() (bool, error) {
+func (j *Json) CheckBool() (bool, bool) {
 	if s, ok := (j.data).(bool); ok {
-		return s, nil
+		return s, true
 	}
-	return false, errors.New("type assertion to bool failed")
+	return false, false
 }
 
 // CheckString type asserts to `string`
-func (j *Json) CheckString() (string, error) {
+func (j *Json) CheckString() (string, bool) {
 	if s, ok := (j.data).(string); ok {
-		return s, nil
+		return s, true
 	}
-	return "", errors.New("type assertion to string failed")
+	return "", false
 }
 
 // JSONArray guarantees the return of a `[]*Json` (with optional default)
@@ -244,8 +243,8 @@ func (j *Json) JSONArray(args ...[]*Json) []*Json {
 		log.Panicf("JSONArray() received too many arguments %d", len(args))
 	}
 
-	a, err := j.CheckJSONArray()
-	if err == nil {
+	a, ok := j.CheckJSONArray()
+	if ok {
 		return a
 	}
 
@@ -264,8 +263,8 @@ func (j *Json) JSONMap(args ...map[string]*Json) map[string]*Json {
 		log.Panicf("JSONMap() received too many arguments %d", len(args))
 	}
 
-	a, err := j.CheckJSONMap()
-	if err == nil {
+	a, ok := j.CheckJSONMap()
+	if ok {
 		return a
 	}
 
@@ -289,8 +288,8 @@ func (j *Json) Array(args ...[]interface{}) []interface{} {
 		log.Panicf("Array() received too many arguments %d", len(args))
 	}
 
-	a, err := j.CheckArray()
-	if err == nil {
+	a, ok := j.CheckArray()
+	if ok {
 		return a
 	}
 
@@ -314,8 +313,8 @@ func (j *Json) Map(args ...map[string]interface{}) map[string]interface{} {
 		log.Panicf("Map() received too many arguments %d", len(args))
 	}
 
-	a, err := j.CheckMap()
-	if err == nil {
+	a, ok := j.CheckMap()
+	if ok {
 		return a
 	}
 
@@ -337,8 +336,8 @@ func (j *Json) String(args ...string) string {
 		log.Panicf("String() received too many arguments %d", len(args))
 	}
 
-	s, err := j.CheckString()
-	if err == nil {
+	s, ok := j.CheckString()
+	if ok {
 		return s
 	}
 
@@ -360,8 +359,8 @@ func (j *Json) Int(args ...int) int {
 		log.Panicf("Int() received too many arguments %d", len(args))
 	}
 
-	i, err := j.CheckInt()
-	if err == nil {
+	i, ok := j.CheckInt()
+	if ok {
 		return i
 	}
 
@@ -383,8 +382,8 @@ func (j *Json) Float64(args ...float64) float64 {
 		log.Panicf("Float64() received too many arguments %d", len(args))
 	}
 
-	f, err := j.CheckFloat64()
-	if err == nil {
+	f, ok := j.CheckFloat64()
+	if ok {
 		return f
 	}
 
@@ -406,8 +405,8 @@ func (j *Json) Bool(args ...bool) bool {
 		log.Panicf("Bool() received too many arguments %d", len(args))
 	}
 
-	b, err := j.CheckBool()
-	if err == nil {
+	b, ok := j.CheckBool()
+	if ok {
 		return b
 	}
 
@@ -429,8 +428,8 @@ func (j *Json) Int64(args ...int64) int64 {
 		log.Panicf("Int64() received too many arguments %d", len(args))
 	}
 
-	i, err := j.CheckInt64()
-	if err == nil {
+	i, ok := j.CheckInt64()
+	if ok {
 		return i
 	}
 
@@ -452,8 +451,8 @@ func (j *Json) Uint64(args ...uint64) uint64 {
 		log.Panicf("Uint64() received too many arguments %d", len(args))
 	}
 
-	i, err := j.CheckUint64()
-	if err == nil {
+	i, ok := j.CheckUint64()
+	if ok {
 		return i
 	}
 
