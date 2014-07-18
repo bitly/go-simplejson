@@ -232,15 +232,7 @@ func (j *Json) CheckString() (string, error) {
 	return "", errors.New("type assertion to string failed")
 }
 
-// CheckBytes type asserts to `[]byte`
-func (j *Json) CheckBytes() ([]byte, error) {
-	if s, ok := (j.data).(string); ok {
-		return []byte(s), nil
-	}
-	return nil, errors.New("type assertion to []byte failed")
-}
-
-// JSONArray guarantees the return of a `[]interface{}` (with optional default)
+// JSONArray guarantees the return of a `[]*Json` (with optional default)
 func (j *Json) JSONArray(args ...[]*Json) []*Json {
 	var def []*Json
 
@@ -260,7 +252,7 @@ func (j *Json) JSONArray(args ...[]*Json) []*Json {
 	return def
 }
 
-// JSONMap guarantees the return of a `map[string]interface{}` (with optional default)
+// JSONMap guarantees the return of a `map[string]*Json` (with optional default)
 func (j *Json) JSONMap(args ...map[string]*Json) map[string]*Json {
 	var def map[string]*Json
 
