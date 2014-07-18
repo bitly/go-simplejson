@@ -174,8 +174,8 @@ func (j *Json) CheckGet(branch ...interface{}) (*Json, bool) {
 	return jin, true
 }
 
-// CheckJsonMap returns a copy of a Json map, but with values as Jsons
-func (j *Json) CheckJsonMap() (map[string]*Json, error) {
+// CheckJSONMap returns a copy of a Json map, but with values as Jsons
+func (j *Json) CheckJSONMap() (map[string]*Json, error) {
 	m, err := j.CheckMap()
 	if err != nil {
 		return nil, err
@@ -187,8 +187,8 @@ func (j *Json) CheckJsonMap() (map[string]*Json, error) {
 	return jm, nil
 }
 
-// CheckJsonArray returns a copy of an array, but with each value as a Json
-func (j *Json) CheckJsonArray() ([]*Json, error) {
+// CheckJSONArray returns a copy of an array, but with each value as a Json
+func (j *Json) CheckJSONArray() ([]*Json, error) {
 	a, err := j.CheckArray()
 	if err != nil {
 		return nil, err
@@ -240,8 +240,8 @@ func (j *Json) CheckBytes() ([]byte, error) {
 	return nil, errors.New("type assertion to []byte failed")
 }
 
-// JsonArray guarantees the return of a `[]interface{}` (with optional default)
-func (j *Json) JsonArray(args ...[]*Json) []*Json {
+// JSONArray guarantees the return of a `[]interface{}` (with optional default)
+func (j *Json) JSONArray(args ...[]*Json) []*Json {
 	var def []*Json
 
 	switch len(args) {
@@ -249,10 +249,10 @@ func (j *Json) JsonArray(args ...[]*Json) []*Json {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("JsonArray() received too many arguments %d", len(args))
+		log.Panicf("JSONArray() received too many arguments %d", len(args))
 	}
 
-	a, err := j.CheckJsonArray()
+	a, err := j.CheckJSONArray()
 	if err == nil {
 		return a
 	}
@@ -260,8 +260,8 @@ func (j *Json) JsonArray(args ...[]*Json) []*Json {
 	return def
 }
 
-// JsonMap guarantees the return of a `map[string]interface{}` (with optional default)
-func (j *Json) JsonMap(args ...map[string]*Json) map[string]*Json {
+// JSONMap guarantees the return of a `map[string]interface{}` (with optional default)
+func (j *Json) JSONMap(args ...map[string]*Json) map[string]*Json {
 	var def map[string]*Json
 
 	switch len(args) {
@@ -269,10 +269,10 @@ func (j *Json) JsonMap(args ...map[string]*Json) map[string]*Json {
 	case 1:
 		def = args[0]
 	default:
-		log.Panicf("JsonMap() received too many arguments %d", len(args))
+		log.Panicf("JSONMap() received too many arguments %d", len(args))
 	}
 
-	a, err := j.CheckJsonMap()
+	a, err := j.CheckJSONMap()
 	if err == nil {
 		return a
 	}

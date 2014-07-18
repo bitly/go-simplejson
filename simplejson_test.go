@@ -87,12 +87,12 @@ func TestSimplejson(t *testing.T) {
 	gpa2, _ := js.Get("test", "arraywithsubs", 1, "subkeythree").CheckInt()
 	assert.Equal(t, 3, gpa2)
 
-	jm, err := js.Get("test").CheckJsonMap()
+	jm, err := js.Get("test").CheckJSONMap()
 	assert.Equal(t, err, nil)
 	jmbool, _ := jm["bool"].CheckBool()
 	assert.Equal(t, true, jmbool)
 
-	ja, err := js.Get("test", "string_array").CheckJsonArray()
+	ja, err := js.Get("test", "string_array").CheckJSONArray()
 	assert.Equal(t, err, nil)
 	jastr, _ := ja[0].CheckString()
 	assert.Equal(t, "asdf", jastr)
@@ -114,10 +114,10 @@ func TestSimplejson(t *testing.T) {
 	js.Get("test", "sub_obj").Set("a", 3)
 	assert.Equal(t, 3, js.Get("test", "sub_obj", "a").Int())
 
-	jmm := js.Get("missing_map").JsonMap(map[string]*Json{"js1": js})
+	jmm := js.Get("missing_map").JSONMap(map[string]*Json{"js1": js})
 	assert.Equal(t, js, jmm["js1"])
 
-	jma := js.Get("missing_array").JsonArray([]*Json{js})
+	jma := js.Get("missing_array").JSONArray([]*Json{js})
 	assert.Equal(t, js, jma[0])
 }
 
