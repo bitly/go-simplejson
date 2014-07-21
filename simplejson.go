@@ -16,7 +16,7 @@ type JSON struct {
 
 // NewJson returns a pointer to a new `JSON` object
 // after unmarshaling `body` bytes
-func NewJson(body []byte) (*JSON, error) {
+func NewJSON(body []byte) (*JSON, error) {
 	j := new(JSON)
 	err := j.UnmarshalJSON(body)
 	if err != nil {
