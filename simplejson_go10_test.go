@@ -49,7 +49,7 @@ func TestNewFromReader(t *testing.T) {
 }
 
 func TestSimplejsonGo10(t *testing.T) {
-	js, err := NewJson([]byte(`{
+	js, err := NewJSON([]byte(`{
 		"test": {
 			"array": [1, "2", 3],
 			"arraywithsubs": [
