@@ -11,15 +11,15 @@ import (
 )
 
 // Implements the json.Unmarshaler interface.
-func (j *Json) UnmarshalJSON(p []byte) error {
+func (j *JSON) UnmarshalJSON(p []byte) error {
 	dec := json.NewDecoder(bytes.NewBuffer(p))
 	dec.UseNumber()
 	return dec.Decode(&j.data)
 }
 
-// NewFromReader returns a *Json by decoding from an io.Reader
-func NewFromReader(r io.Reader) (*Json, error) {
-	j := new(Json)
+// NewFromReader returns a *JSON by decoding from an io.Reader
+func NewFromReader(r io.Reader) (*JSON, error) {
+	j := new(JSON)
 	dec := json.NewDecoder(r)
 	dec.UseNumber()
 	err := dec.Decode(&j.data)
@@ -27,7 +27,7 @@ func NewFromReader(r io.Reader) (*Json, error) {
 }
 
 // CheckFloat64 coerces into a float64
-func (j *Json) CheckFloat64() (float64, bool) {
+func (j *JSON) CheckFloat64() (float64, bool) {
 	switch j.data.(type) {
 	case json.Number:
 		nr, err := j.data.(json.Number).Float64()
@@ -43,7 +43,7 @@ func (j *Json) CheckFloat64() (float64, bool) {
 }
 
 // CheckInt coerces into an int
-func (j *Json) CheckInt() (int, bool) {
+func (j *JSON) CheckInt() (int, bool) {
 	switch j.data.(type) {
 	case json.Number:
 		nr, err := j.data.(json.Number).Int64()
@@ -59,7 +59,7 @@ func (j *Json) CheckInt() (int, bool) {
 }
 
 // CheckInt64 coerces into an int64
-func (j *Json) CheckInt64() (int64, bool) {
+func (j *JSON) CheckInt64() (int64, bool) {
 	switch j.data.(type) {
 	case json.Number:
 		nr, err := j.data.(json.Number).Int64()
@@ -75,7 +75,7 @@ func (j *Json) CheckInt64() (int64, bool) {
 }
 
 // CheckUint64 coerces into an uint64
-func (j *Json) CheckUint64() (uint64, bool) {
+func (j *JSON) CheckUint64() (uint64, bool) {
 	switch j.data.(type) {
 	case json.Number:
 		nr, err := strconv.ParseUint(j.data.(json.Number).String(), 10, 64)

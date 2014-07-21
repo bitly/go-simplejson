@@ -8,21 +8,21 @@ import (
 	"reflect"
 )
 
-// NewFromReader returns a *Json by decoding from an io.Reader
-func NewFromReader(r io.Reader) (*Json, error) {
-	j := new(Json)
+// NewFromReader returns a *JSON by decoding from an io.Reader
+func NewFromReader(r io.Reader) (*JSON, error) {
+	j := new(JSON)
 	dec := json.NewDecoder(r)
 	err := dec.Decode(&j.data)
 	return j, err
 }
 
 // Implements the json.Unmarshaler interface.
-func (j *Json) UnmarshalJSON(p []byte) error {
+func (j *JSON) UnmarshalJSON(p []byte) error {
 	return json.Unmarshal(p, &j.data)
 }
 
 // CheckFloat64 coerces into a float64
-func (j *Json) CheckFloat64() (float64, bool) {
+func (j *JSON) CheckFloat64() (float64, bool) {
 	switch j.data.(type) {
 	case float32, float64:
 		return reflect.ValueOf(j.data).Float(), true
@@ -35,7 +35,7 @@ func (j *Json) CheckFloat64() (float64, bool) {
 }
 
 // CheckInt coerces into an int
-func (j *Json) CheckInt() (int, bool) {
+func (j *JSON) CheckInt() (int, bool) {
 	switch j.data.(type) {
 	case float32, float64:
 		return int(reflect.ValueOf(j.data).Float()), true
@@ -48,7 +48,7 @@ func (j *Json) CheckInt() (int, bool) {
 }
 
 // CheckInt64 coerces into an int64
-func (j *Json) CheckInt64() (int64, bool) {
+func (j *JSON) CheckInt64() (int64, bool) {
 	switch j.data.(type) {
 	case float32, float64:
 		return int64(reflect.ValueOf(j.data).Float()), true
@@ -61,7 +61,7 @@ func (j *Json) CheckInt64() (int64, bool) {
 }
 
 // CheckUint64 coerces into an uint64
-func (j *Json) CheckUint64() (uint64, bool) {
+func (j *JSON) CheckUint64() (uint64, bool) {
 	switch j.data.(type) {
 	case float32, float64:
 		return uint64(reflect.ValueOf(j.data).Float()), true

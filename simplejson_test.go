@@ -114,21 +114,21 @@ func TestSimplejson(t *testing.T) {
 	js.Get("test", "sub_obj").Set("a", 3)
 	assert.Equal(t, 3, js.Get("test", "sub_obj", "a").Int())
 
-	jmm := js.Get("missing_map").JSONMap(map[string]*Json{"js1": js})
+	jmm := js.Get("missing_map").JSONMap(map[string]*JSON{"js1": js})
 	assert.Equal(t, js, jmm["js1"])
 
-	jma := js.Get("missing_array").JSONArray([]*Json{js})
+	jma := js.Get("missing_array").JSONArray([]*JSON{js})
 	assert.Equal(t, js, jma[0])
 }
 
 func TestStdlibInterfaces(t *testing.T) {
 	val := new(struct {
 		Name   string `json:"name"`
-		Params *Json  `json:"params"`
+		Params *JSON  `json:"params"`
 	})
 	val2 := new(struct {
 		Name   string `json:"name"`
-		Params *Json  `json:"params"`
+		Params *JSON  `json:"params"`
 	})
 
 	raw := `{"name":"myobject","params":{"string":"simplejson"}}`
