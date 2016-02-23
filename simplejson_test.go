@@ -246,3 +246,10 @@ func TestPathWillOverwriteExisting(t *testing.T) {
 	assert.Equal(t, nil, err)
 	assert.Equal(t, "bar", s)
 }
+
+func TestInnerMapCanBePointer(t *testing.T) {
+	inner := map[string]interface{}{"key": "value"}
+	data := map[string]interface{}{"key": &inner}
+	js := NewFromMap(data)
+	assert.Equal(t, "value", js.Get("key").Get("key").MustString())
+}

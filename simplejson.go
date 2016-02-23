@@ -33,6 +33,13 @@ func New() *Json {
 	}
 }
 
+// NewFromMap returns a pointer to a new `Json` object initialized by `data`
+func NewFromMap(data map[string]interface{}) *Json {
+	return &Json{
+		data: data,
+	}
+}
+
 // Interface returns the underlying data
 func (j *Json) Interface() interface{} {
 	return j.data
@@ -175,6 +182,9 @@ func (j *Json) CheckGet(key string) (*Json, bool) {
 func (j *Json) Map() (map[string]interface{}, error) {
 	if m, ok := (j.data).(map[string]interface{}); ok {
 		return m, nil
+	}
+	if m, ok := (j.data).(*map[string]interface{}); ok {
+		return *m, nil
 	}
 	return nil, errors.New("type assertion to map[string]interface{} failed")
 }
