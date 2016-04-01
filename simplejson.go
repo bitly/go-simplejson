@@ -444,3 +444,13 @@ func (j *Json) MustUint64(args ...uint64) uint64 {
 
 	return def
 }
+
+func (j *Json) Len() (int, error) {
+    if array, err := j.Array(); err == nil {
+        return len(array), nil
+    }
+    if m, err := j.Map(); err == nil {
+        return len(m), nil
+    }
+    return -1, errors.New("not array or map.")
+}
