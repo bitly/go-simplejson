@@ -92,11 +92,14 @@ func (j *Json) Set(key string, val interface{}) {
 		return
 	}
 	m[key] = val
+	j.reader = nil // JSON changed, reset reader
 }
 
 // SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
 // and then finally writing in the value
 func (j *Json) SetPath(branch []string, val interface{}) {
+	j.reader = nil // JSON changed, reset reader
+
 	if len(branch) == 0 {
 		j.data = val
 		return
@@ -140,6 +143,7 @@ func (j *Json) Del(key string) {
 		return
 	}
 	delete(m, key)
+	j.reader = nil // JSON changed, reset reader
 }
 
 // Get returns a pointer to a new `Json` object
