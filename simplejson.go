@@ -53,6 +53,12 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
+// EncodeIndent returns its marshaled data indented as `[]byte`
+// this method takes the same parameters as the json.MarshalIndent method
+func (j *Json) EncodeIndent(prefix string, indent string) ([]byte, error) {
+	return json.MarshalIndent(&j.data, prefix, indent)
+}
+
 // Set modifies `Json` map by `key` and `value`
 // Useful for changing single key/value in a `Json` object easily.
 func (j *Json) Set(key string, val interface{}) {
