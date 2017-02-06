@@ -19,7 +19,7 @@ type Json struct {
 // after unmarshaling `body` bytes
 func NewJson(body []byte) (*Json, error) {
 	j := new(Json)
-	err := j.UnmarshalJSON(body)
+	err := json.Unmarshal(body, &j.data)
 	if err != nil {
 		return nil, err
 	}
@@ -53,14 +53,25 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
+// Implements the json.Marshaler interface with indent
+func (j * Json) MarshalJSONIndent(prefix string, indent string) ([]byte, error){
+	return json.MarshalIndent(&j.data, prefix, indent)
+}
+
 // Set modifies `Json` map by `key` and `value`
 // Useful for changing single key/value in a `Json` object easily.
 func (j *Json) Set(key string, val interface{}) {
+	switch val.(type){
+	case Json: 
+		val = val.(Json).data
+	default:
+        }
 	m, err := j.Map()
 	if err != nil {
 		return
 	}
 	m[key] = val
+
 }
 
 // SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
@@ -177,6 +188,10 @@ func (j *Json) Map() (map[string]interface{}, error) {
 		return m, nil
 	}
 	return nil, errors.New("type assertion to map[string]interface{} failed")
+}
+
+func (j *Json) Interface() interface{}{
+	return j.data
 }
 
 // Array type asserts to an `array`
