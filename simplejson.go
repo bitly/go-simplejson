@@ -126,6 +126,19 @@ func (j *Json) Get(key string) *Json {
 	return &Json{nil}
 }
 
+// Keys return the top level key of this Json object
+func (j *Json) Keys() []string {
+	m, err := j.Map()
+	if err == nil {
+		var keys []string
+		for key := range m {
+			keys = append(keys, key)
+		}
+		return keys
+	}
+	return nil
+}
+
 // GetPath searches for the item as specified by the branch
 // without the need to deep dive using Get()'s.
 //
