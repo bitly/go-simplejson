@@ -4,12 +4,24 @@ import (
 	"encoding/json"
 	"testing"
 
+	"sort"
+
 	"github.com/bmizerany/assert"
 )
 
 func TestSimplejson(t *testing.T) {
 	var ok bool
 	var err error
+	keys := []string{"string_array",
+		"string_array_null",
+		"array",
+		"arraywithsubs",
+		"int",
+		"float",
+		"string",
+		"bool",
+		"sub_obj"}
+	sort.Strings(keys)
 
 	js, err := NewJson([]byte(`{
 		"test": {
@@ -122,6 +134,12 @@ func TestSimplejson(t *testing.T) {
 
 	js.GetPath("test", "sub_obj").Set("a", 3)
 	assert.Equal(t, 3, js.GetPath("test", "sub_obj", "a").MustInt())
+
+	assert.Equal(t, "test", js.Keys()[0])
+
+	jsKeys := js.Get("test").Keys()
+	sort.Strings(jsKeys)
+	assert.Equal(t, keys, jsKeys)
 }
 
 func TestStdlibInterfaces(t *testing.T) {
