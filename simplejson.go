@@ -136,6 +136,28 @@ func (j *JSON) getIndex(index int) (*JSON, bool) {
 	return nil, false
 }
 
+// Keys returns the top level keys of the current `JSON` object
+func (j *JSON) Keys() []string {
+	m, ok := j.CheckMap()
+	if ok {
+		keys := []string{}
+		for key := range m {
+			keys = append(keys, key)
+		}
+		return keys
+	}
+	return nil
+}
+
+// CheckKeys is like Keys, except it also returns a bool indicating
+// if this `JSON` object is an map
+func (j *JSON) CheckKeys() ([]string, bool) {
+	if keys := j.Keys(); keys != nil {
+		return keys, true
+	}
+	return nil, false
+}
+
 // Get searches for the item as specified by the branch
 // within a nested JSON and returns a new JSON pointer
 // the pointer is always a valid JSON, allowing for chained operations
