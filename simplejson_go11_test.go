@@ -29,7 +29,7 @@ func TestNewFromReader(t *testing.T) {
 	assert.NotEqual(t, nil, js)
 	assert.Equal(t, nil, err)
 
-	arr, _ := js.Get("test").Get("array").Array()
+	arr, _ := js.Get("test").Get("array").CheckArray()
 	assert.NotEqual(t, nil, arr)
 	for i, v := range arr {
 		var iv int
@@ -44,18 +44,18 @@ func TestNewFromReader(t *testing.T) {
 		assert.Equal(t, i+1, iv)
 	}
 
-	ma := js.Get("test").Get("array").MustArray()
+	ma := js.Get("test").Get("array").Array()
 	assert.Equal(t, ma, []interface{}{json.Number("1"), "2", json.Number("3")})
 
-	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
+	mm := js.Get("test").Get("arraywithsubs").Get(0).Map()
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
 
-	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
-	assert.Equal(t, js.Get("test").Get("uint64").MustUint64(), uint64(18446744073709551615))
+	assert.Equal(t, js.Get("test").Get("bignum").Int64(), int64(9223372036854775807))
+	assert.Equal(t, js.Get("test").Get("uint64").Uint64(), uint64(18446744073709551615))
 }
 
 func TestSimplejsonGo11(t *testing.T) {
-	js, err := NewJson([]byte(`{
+	js, err := NewJSON([]byte(`{
 		"test": {
 			"array": [1, "2", 3],
 			"arraywithsubs": [
@@ -70,7 +70,7 @@ func TestSimplejsonGo11(t *testing.T) {
 	assert.NotEqual(t, nil, js)
 	assert.Equal(t, nil, err)
 
-	arr, _ := js.Get("test").Get("array").Array()
+	arr, _ := js.Get("test").Get("array").CheckArray()
 	assert.NotEqual(t, nil, arr)
 	for i, v := range arr {
 		var iv int
@@ -85,12 +85,12 @@ func TestSimplejsonGo11(t *testing.T) {
 		assert.Equal(t, i+1, iv)
 	}
 
-	ma := js.Get("test").Get("array").MustArray()
+	ma := js.Get("test").Get("array").Array()
 	assert.Equal(t, ma, []interface{}{json.Number("1"), "2", json.Number("3")})
 
-	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
+	mm := js.Get("test").Get("arraywithsubs").Get(0).Map()
 	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
 
-	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
-	assert.Equal(t, js.Get("test").Get("uint64").MustUint64(), uint64(18446744073709551615))
+	assert.Equal(t, js.Get("test").Get("bignum").Int64(), int64(9223372036854775807))
+	assert.Equal(t, js.Get("test").Get("uint64").Uint64(), uint64(18446744073709551615))
 }
