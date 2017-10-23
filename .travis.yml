@@ -16,7 +16,7 @@ matrix:
     - go: tip
 
 before_install:
-  - go get -v github.com/bmizerany/assert
+  - go get -v github.com/stretchr/testify
 
 script:
   - go test -v ./...
