@@ -3,6 +3,7 @@ package simplejson
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 )
 
@@ -30,6 +31,13 @@ func NewJson(body []byte) (*Json, error) {
 func New() *Json {
 	return &Json{
 		data: make(map[string]interface{}),
+	}
+}
+
+// NewFromMap returns a pointer to a new `Json` object initialized by `data`
+func NewFromMap(data map[string]interface{}) *Json {
+	return &Json{
+		data: data,
 	}
 }
 
@@ -176,7 +184,13 @@ func (j *Json) Map() (map[string]interface{}, error) {
 	if m, ok := (j.data).(map[string]interface{}); ok {
 		return m, nil
 	}
-	return nil, errors.New("type assertion to map[string]interface{} failed")
+	if m, ok := (j.data).(*map[string]interface{}); ok {
+		return *m, nil
+	}
+	if m, ok := (j.data).(*Json); ok {
+		return m.MustMap(), nil
+	}
+	return nil, errors.New(fmt.Sprintf("type assertion to map[string]interface{} failed %T", j.data))
 }
 
 // Array type asserts to an `array`
