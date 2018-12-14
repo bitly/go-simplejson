@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"fmt"
 )
 
 func TestSimplejson(t *testing.T) {
@@ -89,7 +88,6 @@ func TestSimplejson(t *testing.T) {
 	assert.Equal(t, msa3, []string{"1", "2", "3"})
 
 	mma := js.Get("test").Get("map_array").MustMapArray()
-	fmt.Println(json.Number(123))
 	assert.Equal(t, mma[0], map[string]interface{}{"asdf":json.Number("123")})
 	assert.Equal(t, mma[1], map[string]interface{}{"ghjk":json.Number("456")})
 	assert.Equal(t, mma[2], map[string]interface{}{"zxcv":json.Number("789")})
