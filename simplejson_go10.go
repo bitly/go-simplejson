@@ -17,7 +17,7 @@ func NewFromReader(r io.Reader) (*Json, error) {
 	return j, err
 }
 
-// Implements the json.Unmarshaler interface.
+// UnmarshalJSON: Implements the json.Unmarshaler interface.
 func (j *Json) UnmarshalJSON(p []byte) error {
 	return json.Unmarshal(p, &j.data)
 }
