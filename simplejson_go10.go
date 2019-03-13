@@ -22,6 +22,15 @@ func (j *Json) UnmarshalJSON(p []byte) error {
 	return json.Unmarshal(p, &j.data)
 }
 
+// To unmarshal *Json into an interface value
+func (j *Json) Unmarshal(val interface{}) error {
+	p, err := j.Encode()
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(p, val)
+}
+
 // Float64 coerces into a float64
 func (j *Json) Float64() (float64, error) {
 	switch j.data.(type) {
