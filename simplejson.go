@@ -33,6 +33,12 @@ func New() *Json {
 	}
 }
 
+func NewArray(c int) *Json {
+	return &Json{
+		data: make([]interface{}, 0, c),
+	}
+}
+
 // Interface returns the underlying data
 func (j *Json) Interface() interface{} {
 	return j.data
@@ -51,6 +57,14 @@ func (j *Json) EncodePretty() ([]byte, error) {
 // Implements the json.Marshaler interface.
 func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
+}
+
+func (j *Json) AddArray(val interface{}) {
+	arr, err := j.Array()
+	if err != nil {
+		return
+	}
+	j.data = append(arr, val)
 }
 
 // Set modifies `Json` map by `key` and `value`
