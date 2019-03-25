@@ -27,12 +27,15 @@ func NewJson(body []byte) (*Json, error) {
 }
 
 // New returns a pointer to a new, empty `Json` object
+// type map
 func New() *Json {
 	return &Json{
 		data: make(map[string]interface{}),
 	}
 }
 
+// NewArray returns a pointer to a new, empty `Json` object
+// type slice
 func NewArray(c int) *Json {
 	return &Json{
 		data: make([]interface{}, 0, c),
@@ -59,6 +62,8 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
+// AddArray adds val to the `Json` slice
+// Useful for adding value in a `Json` slice easily.
 func (j *Json) AddArray(val interface{}) {
 	arr, err := j.Array()
 	if err != nil {
