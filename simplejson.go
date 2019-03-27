@@ -3,7 +3,9 @@ package simplejson
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
+	"strconv"
 )
 
 // returns the current implementation version
@@ -462,4 +464,49 @@ func (j *Json) MustUint64(args ...uint64) uint64 {
 	}
 
 	return def
+}
+
+func (j *Json) ToString() string {
+	switch j.data.(type) {
+	case string:
+		return j.data.(string)
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
+		return fmt.Sprintf("%d", j.data)
+	case float32, float64:
+		return fmt.Sprintf("%f", j.data)
+	case bool:
+		return fmt.Sprintf("%t", j.data)
+	}
+	return ""
+}
+
+func (j *Json) ToInt() int {
+	var v int
+	switch j.data.(type) {
+	case bool:
+		if j.data.(bool) {
+			v = 1
+		}
+	case string:
+		v, _ = strconv.Atoi(j.data.(string))
+	default:
+		v, _ = j.Int()
+	}
+	return v
+}
+
+func (j *Json) ToBool() bool {
+	switch j.data.(type) {
+	case bool:
+		return j.data.(bool)
+	case string:
+		if j.data.(string) == "true" {
+			return true
+		}
+	default:
+		if j.ToInt() != 0 {
+			return true
+		}
+	}
+	return false
 }
