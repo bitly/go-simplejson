@@ -175,6 +175,13 @@ func (j *Json) GetIndex(index int) *Json {
 	return &Json{nil}
 }
 
+func (j *Json) ArrayLen() int {
+	if a, err := j.Array(); err == nil {
+		return len(a)
+	}
+	return 0
+}
+
 // CheckGet returns a pointer to a new `Json` object and
 // a `bool` identifying success or failure
 //
