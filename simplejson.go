@@ -30,10 +30,21 @@ func NewJson(body []byte) (*Json, error) {
 
 // New returns a pointer to a new, empty `Json` object
 // type map
-func New() *Json {
-	return &Json{
-		data: make(map[string]interface{}),
+func New(args ...interface{}) *Json {
+	var js *Json
+	switch len(args) {
+	case 0:
+		js = &Json{
+			data: make(map[string]interface{}),
+		}
+	case 1:
+		js = &Json{
+			data: args[0],
+		}
+	default:
+		log.Panicf("MustBool() received too many arguments %d", len(args))
 	}
+	return js
 }
 
 // NewArray returns a pointer to a new, empty `Json` object
