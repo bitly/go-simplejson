@@ -30,21 +30,10 @@ func NewJson(body []byte) (*Json, error) {
 
 // New returns a pointer to a new, empty `Json` object
 // type map
-func New(args ...interface{}) *Json {
-	var js *Json
-	switch len(args) {
-	case 0:
-		js = &Json{
-			data: make(map[string]interface{}),
-		}
-	case 1:
-		js = &Json{
-			data: args[0],
-		}
-	default:
-		log.Panicf("MustBool() received too many arguments %d", len(args))
+func New() *Json {
+	return &Json{
+		data: make(map[string]interface{}),
 	}
-	return js
 }
 
 // NewArray returns a pointer to a new, empty `Json` object
@@ -53,6 +42,11 @@ func NewArray(c int) *Json {
 	return &Json{
 		data: make([]interface{}, 0, c),
 	}
+}
+
+// Wrap returns a pointer to a new, `Json` object
+func Wrap(val interface{}) *Json {
+	return &Json{data: val}
 }
 
 // Interface returns the underlying data
@@ -186,6 +180,7 @@ func (j *Json) GetIndex(index int) *Json {
 	return &Json{nil}
 }
 
+// ArrayLen returns a length current slice
 func (j *Json) ArrayLen() int {
 	if a, err := j.Array(); err == nil {
 		return len(a)
@@ -484,6 +479,7 @@ func (j *Json) MustUint64(args ...uint64) uint64 {
 	return def
 }
 
+// ToString type cast to `string`
 func (j *Json) ToString() string {
 	switch j.data.(type) {
 	case string:
@@ -498,6 +494,7 @@ func (j *Json) ToString() string {
 	return ""
 }
 
+// ToInt type cast to `int`
 func (j *Json) ToInt() int {
 	var v int
 	switch j.data.(type) {
@@ -513,6 +510,7 @@ func (j *Json) ToInt() int {
 	return v
 }
 
+// ToBool type cast to `bool`
 func (j *Json) ToBool() bool {
 	switch j.data.(type) {
 	case bool:
