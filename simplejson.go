@@ -62,29 +62,14 @@ func (j *Json) Set(key string, val interface{}) {
 		return
 	}
 
-	if val != nil {
-		// If val is an array convert to []interface{}
-		typ := reflect.TypeOf(val)
-		kind := typ.Kind()
-		if kind == reflect.Array || kind == reflect.Slice {
-
-			v := reflect.ValueOf(val)
-			a := make([]interface{}, v.Len())
-			for i := 0; i < v.Len(); i++ {
-				a[i] = v.Index(i).Interface()
-			}
-			m[key] = a
-			return
-		}
-	}
-	m[key] = val
+	m[key] = handleArray(val)
 }
 
 // SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
 // and then finally writing in the value
 func (j *Json) SetPath(branch []string, val interface{}) {
 	if len(branch) == 0 {
-		j.data = val
+		j.data = handleArray(val)
 		return
 	}
 
@@ -116,7 +101,7 @@ func (j *Json) SetPath(branch []string, val interface{}) {
 	}
 
 	// add remaining k/v
-	curr[branch[len(branch)-1]] = val
+	curr[branch[len(branch)-1]] = handleArray(val)
 }
 
 // Del modifies `Json` map by deleting `key` if it is present.
@@ -460,4 +445,22 @@ func (j *Json) MustUint64(args ...uint64) uint64 {
 	}
 
 	return def
+}
+
+func handleArray(val interface{}) interface{} {
+	if val != nil {
+		// If val is an array convert to []interface{}
+		typ := reflect.TypeOf(val)
+		kind := typ.Kind()
+		if kind == reflect.Array || kind == reflect.Slice {
+
+			v := reflect.ValueOf(val)
+			arr := make([]interface{}, v.Len())
+			for i := 0; i < v.Len(); i++ {
+				arr[i] = v.Index(i).Interface()
+			}
+			val = arr
+		}
+	}
+	return val
 }
