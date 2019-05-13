@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"reflect"
 )
 
 // returns the current implementation version
@@ -59,6 +60,22 @@ func (j *Json) Set(key string, val interface{}) {
 	m, err := j.Map()
 	if err != nil {
 		return
+	}
+
+	if val != nil {
+		// If val is an array convert to []interface{}
+		typ := reflect.TypeOf(val)
+		kind := typ.Kind()
+		if kind == reflect.Array || kind == reflect.Slice {
+
+			v := reflect.ValueOf(val)
+			a := make([]interface{}, v.Len())
+			for i := 0; i < v.Len(); i++ {
+				a[i] = v.Index(i).Interface()
+			}
+			m[key] = a
+			return
+		}
 	}
 	m[key] = val
 }

@@ -122,6 +122,24 @@ func TestSimplejson(t *testing.T) {
 
 	js.GetPath("test", "sub_obj").Set("a", 3)
 	assert.Equal(t, 3, js.GetPath("test", "sub_obj", "a").MustInt())
+
+	a := [3]string{"one", "two", "three"}
+	js = New()
+	js.Set("array", a)
+	a2, err := js.Get("array").Array()
+	assert.Equal(t, nil, err)
+	assert.NotEqual(t, nil, a2)
+	assert.Equal(t, a2[0], "one")
+	assert.Equal(t, a2[1], "two")
+	assert.Equal(t, a2[2], "three")
+
+	a3, err := js.Get("array").StringArray()
+	assert.Equal(t, nil, err)
+	assert.NotEqual(t, nil, a3)
+	assert.Equal(t, a3[0], "one")
+	assert.Equal(t, a3[1], "two")
+	assert.Equal(t, a3[2], "three")
+
 }
 
 func TestStdlibInterfaces(t *testing.T) {
