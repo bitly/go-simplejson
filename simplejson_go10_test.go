@@ -4,9 +4,10 @@ package simplejson
 
 import (
 	"bytes"
-	"github.com/bmizerany/assert"
 	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewFromReader(t *testing.T) {

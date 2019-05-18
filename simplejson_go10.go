@@ -45,7 +45,7 @@ func (j *Json) Int() (int, error) {
 	case uint, uint8, uint16, uint32, uint64:
 		return int(reflect.ValueOf(j.data).Uint()), nil
 	}
-	return 0, errors.New("invalid value type")
+	return 0, errors.New("invalid value type %T", j.data)
 }
 
 // Int64 coerces into an int64
@@ -58,7 +58,7 @@ func (j *Json) Int64() (int64, error) {
 	case uint, uint8, uint16, uint32, uint64:
 		return int64(reflect.ValueOf(j.data).Uint()), nil
 	}
-	return 0, errors.New("invalid value type")
+	return 0, errors.New("invalid value type %T", j.data)
 }
 
 // Uint64 coerces into an uint64
