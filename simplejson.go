@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"strings"
 )
 
 // returns the current implementation version
@@ -137,6 +138,15 @@ func (j *Json) GetPath(branch ...string) *Json {
 	}
 	return jin
 }
+
+// GetPath2 does for a single joint branch name like:
+// js.GetPath2("top_level.dict")
+// It does the same thing like js.GetPath("top_level", "dict")
+func (j *Json) GetPath2(branches string) *Json {
+	branch := strings.Split(branches, ".")
+	return j.GetPath(branch...)
+}
+
 
 // GetIndex returns a pointer to a new `Json` object
 // for `index` in its `array` representation
