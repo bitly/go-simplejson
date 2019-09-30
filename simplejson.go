@@ -54,6 +54,13 @@ func (j *Json) Interface() interface{} {
 	return j.data
 }
 
+func (j *Json) Empty() bool {
+	if j.data == nil {
+		return true
+	}
+	return false
+}
+
 // Encode returns its marshaled data as `[]byte`
 func (j *Json) Encode() ([]byte, error) {
 	return j.MarshalJSON()
@@ -71,22 +78,22 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 
 // AddArray adds val to the `Json` slice
 // Useful for adding value in a `Json` slice easily.
-func (j *Json) AddArray(val interface{}) {
+func (j *Json) AddArray(val interface{}) error {
 	arr, err := j.Array()
-	if err != nil {
-		return
+	if err == nil {
+		j.data = append(arr, val)
 	}
-	j.data = append(arr, val)
+	return err
 }
 
 // Set modifies `Json` map by `key` and `value`
 // Useful for changing single key/value in a `Json` object easily.
-func (j *Json) Set(key string, val interface{}) {
+func (j *Json) Set(key string, val interface{}) error {
 	m, err := j.Map()
-	if err != nil {
-		return
+	if err == nil {
+		m[key] = val
 	}
-	m[key] = val
+	return err
 }
 
 // SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
@@ -188,6 +195,17 @@ func (j *Json) ArrayLen() int {
 	return 0
 }
 
+func (j *Json) Len() int {
+	switch j.data.(type) {
+	case []interface{}:
+		return len(j.data.([]interface{}))
+	case map[string]interface{}:
+		return len(j.data.(map[string]interface{}))
+	default:
+		return 0
+	}
+}
+
 // CheckGet returns a pointer to a new `Json` object and
 // a `bool` identifying success or failure
 //
@@ -260,6 +278,26 @@ func (j *Json) StringArray() ([]string, error) {
 		s, ok := a.(string)
 		if !ok {
 			return nil, errors.New("type assertion to []string failed")
+		}
+		retArr = append(retArr, s)
+	}
+	return retArr, nil
+}
+
+func (j *Json) IntArray() ([]int, error) {
+	arr, err := j.Array()
+	if err != nil {
+		return nil, err
+	}
+	retArr := make([]int, 0, len(arr))
+	for _, a := range arr {
+		if a == nil {
+			retArr = append(retArr, 0)
+			continue
+		}
+		s, err := Wrap(a).Int()
+		if err != nil {
+			return nil, errors.New("type assertion to []int failed")
 		}
 		retArr = append(retArr, s)
 	}
@@ -357,6 +395,25 @@ func (j *Json) MustStringArray(args ...[]string) []string {
 	}
 
 	a, err := j.StringArray()
+	if err == nil {
+		return a
+	}
+
+	return def
+}
+
+func (j *Json) MustIntArray(args ...[]int) []int {
+	var def []int
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustIntArray() received too many arguments %d", len(args))
+	}
+
+	a, err := j.IntArray()
 	if err == nil {
 		return a
 	}
