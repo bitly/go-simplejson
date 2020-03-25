@@ -10,4 +10,4 @@ a Go package to interact with arbitrary JSON
 
 ### Documentation
 
-Visit the docs on [gopkgdoc](http://godoc.org/github.com/bitly/go-simplejson)
+Visit the docs on [Go package discovery & docs](https://pkg.go.dev/github.com/bitly/go-simplejson)
