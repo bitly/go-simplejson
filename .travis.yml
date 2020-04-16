@@ -1,27 +1,8 @@
 sudo: false
-
 language: go
 
 go:
-  - 1.8.x
-  - 1.9.x
-  - 1.10.x
-  - 1.11.x
-  - tip
-
-os:
-  - linux
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - go: tip
-
-before_install:
-  - go get -v github.com/stretchr/testify
-
-script:
-  - go test -v ./...
+  - 1.x
 
 notifications:
   email: false
