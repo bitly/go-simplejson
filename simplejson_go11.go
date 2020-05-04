@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-// Implements the json.Unmarshaler interface.
+// UnmarshalJSON: Implements the json.Unmarshaler interface.
 func (j *Json) UnmarshalJSON(p []byte) error {
 	dec := json.NewDecoder(bytes.NewBuffer(p))
 	dec.UseNumber()
