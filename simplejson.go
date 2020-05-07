@@ -1,7 +1,6 @@
 package simplejson
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 )
@@ -12,7 +11,8 @@ func Version() string {
 }
 
 type Json struct {
-	data interface{}
+	data       interface{}
+	escapeHtml bool
 }
 
 // NewJson returns a pointer to a new `Json` object
@@ -41,16 +41,6 @@ func (j *Json) Interface() interface{} {
 // Encode returns its marshaled data as `[]byte`
 func (j *Json) Encode() ([]byte, error) {
 	return j.MarshalJSON()
-}
-
-// EncodePretty returns its marshaled data as `[]byte` with indentation
-func (j *Json) EncodePretty() ([]byte, error) {
-	return json.MarshalIndent(&j.data, "", "  ")
-}
-
-// Implements the json.Marshaler interface.
-func (j *Json) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&j.data)
 }
 
 // Set modifies `Json` map by `key` and `value`
@@ -120,10 +110,10 @@ func (j *Json) Get(key string) *Json {
 	m, err := j.Map()
 	if err == nil {
 		if val, ok := m[key]; ok {
-			return &Json{val}
+			return &Json{data: val, escapeHtml: j.escapeHtml}
 		}
 	}
-	return &Json{nil}
+	return &Json{data: nil, escapeHtml: j.escapeHtml}
 }
 
 // GetPath searches for the item as specified by the branch
@@ -148,10 +138,10 @@ func (j *Json) GetIndex(index int) *Json {
 	a, err := j.Array()
 	if err == nil {
 		if len(a) > index {
-			return &Json{a[index]}
+			return &Json{data: a[index], escapeHtml: j.escapeHtml}
 		}
 	}
-	return &Json{nil}
+	return &Json{data: nil, escapeHtml: j.escapeHtml}
 }
 
 // CheckGet returns a pointer to a new `Json` object and
@@ -165,7 +155,7 @@ func (j *Json) CheckGet(key string) (*Json, bool) {
 	m, err := j.Map()
 	if err == nil {
 		if val, ok := m[key]; ok {
-			return &Json{val}, true
+			return &Json{data: val, escapeHtml: j.escapeHtml}, true
 		}
 	}
 	return nil, false
