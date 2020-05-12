@@ -1,7 +1,6 @@
 package simplejson
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 )
