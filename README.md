@@ -2,7 +2,7 @@
 
 a Go package to interact with arbitrary JSON
 
-[![Build Status](https://secure.travis-ci.org/bitly/go-simplejson.png)](http://travis-ci.org/bitly/go-simplejson)
+[![Build Status](https://secure.travis-ci.org/chennqqi/go-simplejson.png)](http://travis-ci.org/bitly/go-simplejson)
 
 ### Importing
 
@@ -10,4 +10,4 @@ a Go package to interact with arbitrary JSON
 
 ### Documentation
 
-Visit the docs on [gopkgdoc](http://godoc.org/github.com/bitly/go-simplejson)
+Visit the docs on [Go package discovery & docs](https://pkg.go.dev/github.com/chennqqi/go-simplejson)
