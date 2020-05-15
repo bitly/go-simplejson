@@ -149,6 +149,19 @@ func TestStdlibInterfaces(t *testing.T) {
 	assert.Equal(t, val, val2) // stable
 }
 
+func TestIoReader(t *testing.T) {
+	strIn := `{"name":"myobject","params":{"string":"simplejson"}}`
+	bIn := []byte(strIn)
+	jIn, _ := NewJson(bIn)
+
+	jOut, err := NewFromReader(jIn)
+	assert.Equal(t, nil, err)
+
+	bOut, err := jOut.Encode()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, bOut, bIn)
+}
+
 func TestSet(t *testing.T) {
 	js, err := NewJson([]byte(`{}`))
 	assert.Equal(t, nil, err)
