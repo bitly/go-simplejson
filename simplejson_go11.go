@@ -18,6 +18,17 @@ func (j *Json) UnmarshalJSON(p []byte) error {
 	return dec.Decode(&j.data)
 }
 
+// To unmarshal *Json into an interface value
+func (j *Json) Unmarshal(val interface{}) error {
+	p, err := j.Encode()
+	if err != nil {
+		return err
+	}
+	dec := json.NewDecoder(bytes.NewBuffer(p))
+	dec.UseNumber()
+	return dec.Decode(val)
+}
+
 // NewFromReader returns a *Json by decoding from an io.Reader
 func NewFromReader(r io.Reader) (*Json, error) {
 	j := new(Json)
