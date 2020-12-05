@@ -232,6 +232,27 @@ func (j *Json) StringArray() ([]string, error) {
 	return retArr, nil
 }
 
+
+// StringArray type asserts to an `array` of `map[string]interface{}`
+func (j *Json) MapArray() ([]map[string]interface{}, error) {
+	arr, err := j.Array()
+	if err != nil {
+		return nil, err
+	}
+	retArr := make([]map[string]interface{}, 0, len(arr))
+	for _, a := range arr {
+		if a == nil {
+			retArr = append(retArr, nil)
+			continue
+		}
+		s, ok := a.(map[string]interface{})
+		if !ok {
+			return nil, errors.New("type assertion to []map[string]interface{} failed")
+		}
+		retArr = append(retArr, s)
+	}
+	return retArr, nil
+}
 // MustArray guarantees the return of a `[]interface{}` (with optional default)
 //
 // useful when you want to interate over array values in a succinct manner:
@@ -330,6 +351,31 @@ func (j *Json) MustStringArray(args ...[]string) []string {
 	return def
 }
 
+// MustMapArray guarantees the return of a `[]map[string]interface{}` (with optional default)
+//
+// useful when you want to interate over array values in a succinct manner:
+//		for i, s := range js.Get("results").MustMaPArray() {
+//			fmt.Println(i, s)
+//		}
+
+func (j *Json) MustMapArray(args ...[]map[string]interface{}) []map[string]interface{} {
+	var def []map[string]interface{}
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustStringArray() received too many arguments %d", len(args))
+	}
+
+	a, err := j.MapArray()
+	if err == nil {
+		return a
+	}
+
+	return def
+}
 // MustInt guarantees the return of an `int` (with optional default)
 //
 // useful when you explicitly want an `int` in a single value return context:

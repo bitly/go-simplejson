@@ -15,6 +15,8 @@ func TestSimplejson(t *testing.T) {
 		"test": {
 			"string_array": ["asdf", "ghjk", "zxcv"],
 			"string_array_null": ["abc", null, "efg"],
+			"map_array": [{"asdf":123}, {"ghjk":456}, {"zxcv":789}],
+			"map_array_null": [{"asdf":123}, null, {"zxcv":789}],
 			"array": [1, "2", 3],
 			"arraywithsubs": [{"subkeyone": 1},
 			{"subkeytwo": 2, "subkeythree": 3}],
@@ -85,6 +87,19 @@ func TestSimplejson(t *testing.T) {
 	msa3 := js.Get("test").Get("missing_array").MustStringArray([]string{"1", "2", "3"})
 	assert.Equal(t, msa3, []string{"1", "2", "3"})
 
+	mma := js.Get("test").Get("map_array").MustMapArray()
+	assert.Equal(t, mma[0], map[string]interface{}{"asdf":json.Number("123")})
+	assert.Equal(t, mma[1], map[string]interface{}{"ghjk":json.Number("456")})
+	assert.Equal(t, mma[2], map[string]interface{}{"zxcv":json.Number("789")})
+
+	mma2 := js.Get("test").Get("map_array").MustMapArray([]map[string]interface{}{{"a":"1", "b":"2", "c":"3"}})
+	assert.Equal(t, mma2[0], map[string]interface{}{"asdf":json.Number("123")})
+	assert.Equal(t, mma2[1], map[string]interface{}{"ghjk":json.Number("456")})
+	assert.Equal(t, mma2[2], map[string]interface{}{"zxcv":json.Number("789")})
+
+	mma3 := js.Get("test").Get("missing_map_array").MustMapArray([]map[string]interface{}{{"a":"1", "b":"2", "c":"3"}})
+	assert.Equal(t, mma3, []map[string]interface{}{{"a":"1", "b":"2", "c":"3"}})
+
 	mm2 := js.Get("test").Get("missing_map").MustMap(map[string]interface{}{"found": false})
 	assert.Equal(t, mm2, map[string]interface{}{"found": false})
 
@@ -99,6 +114,18 @@ func TestSimplejson(t *testing.T) {
 	assert.Equal(t, strs2[0], "abc")
 	assert.Equal(t, strs2[1], "")
 	assert.Equal(t, strs2[2], "efg")
+
+	maps, err := js.Get("test").Get("map_array").MapArray()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, maps[0], map[string]interface{}{"asdf":json.Number("123")})
+	assert.Equal(t, maps[1], map[string]interface{}{"ghjk":json.Number("456")})
+	assert.Equal(t, maps[2], map[string]interface{}{"zxcv":json.Number("789")})
+
+	maps2, err := js.Get("test").Get("map_array_null").MapArray()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, maps2[0], map[string]interface{}{"asdf":json.Number("123")})
+	assert.Equal(t, maps2[1], map[string]interface{}(nil))
+	assert.Equal(t, maps2[2], map[string]interface{}{"zxcv":json.Number("789")})
 
 	gp, _ := js.GetPath("test", "string").String()
 	assert.Equal(t, "simplejson", gp)
