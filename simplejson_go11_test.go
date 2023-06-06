@@ -5,7 +5,7 @@ package simplejson
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
+	"reflect"
 	"strconv"
 	"testing"
 )
@@ -26,32 +26,49 @@ func TestNewFromReader(t *testing.T) {
 	js, err := NewFromReader(buf)
 
 	//Standard Test Case
-	assert.NotEqual(t, nil, js)
-	assert.Equal(t, nil, err)
+	if js == nil {
+		t.Fatal("got nil")
+	}
+	if err != nil {
+		t.Fatalf("got err %#v", err)
+	}
 
 	arr, _ := js.Get("test").Get("array").Array()
-	assert.NotEqual(t, nil, arr)
+	if arr == nil {
+		t.Fatal("got nil")
+	}
 	for i, v := range arr {
 		var iv int
 		switch v.(type) {
 		case json.Number:
 			i64, err := v.(json.Number).Int64()
-			assert.Equal(t, nil, err)
+			if err != nil {
+				t.Fatalf("got err %#v", err)
+			}
 			iv = int(i64)
 		case string:
 			iv, _ = strconv.Atoi(v.(string))
 		}
-		assert.Equal(t, i+1, iv)
+		if iv != i+1 {
+			t.Errorf("got %#v expected %#v", iv, i+1)
+		}
 	}
 
-	ma := js.Get("test").Get("array").MustArray()
-	assert.Equal(t, ma, []interface{}{json.Number("1"), "2", json.Number("3")})
+	if ma := js.Get("test").Get("array").MustArray(); !reflect.DeepEqual(ma, []interface{}{json.Number("1"), "2", json.Number("3")}) {
+		t.Errorf("got %#v", ma)
+	}
 
 	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
-	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
+	if !reflect.DeepEqual(mm, map[string]interface{}{"subkeyone": json.Number("1")}) {
+		t.Errorf("got %#v", mm)
+	}
 
-	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
-	assert.Equal(t, js.Get("test").Get("uint64").MustUint64(), uint64(18446744073709551615))
+	if n := js.Get("test").Get("bignum").MustInt64(); n != int64(9223372036854775807) {
+		t.Errorf("got %#v", n)
+	}
+	if n := js.Get("test").Get("uint64").MustUint64(); n != uint64(18446744073709551615) {
+		t.Errorf("got %#v", n)
+	}
 }
 
 func TestSimplejsonGo11(t *testing.T) {
@@ -67,30 +84,46 @@ func TestSimplejsonGo11(t *testing.T) {
 		}
 	}`))
 
-	assert.NotEqual(t, nil, js)
-	assert.Equal(t, nil, err)
+	if js == nil {
+		t.Fatal("got nil")
+	}
+	if err != nil {
+		t.Fatalf("got err %#v", err)
+	}
 
 	arr, _ := js.Get("test").Get("array").Array()
-	assert.NotEqual(t, nil, arr)
+	if arr == nil {
+		t.Fatal("got nil")
+	}
 	for i, v := range arr {
 		var iv int
 		switch v.(type) {
 		case json.Number:
 			i64, err := v.(json.Number).Int64()
-			assert.Equal(t, nil, err)
+			if err != nil {
+				t.Fatalf("got err %#v", err)
+			}
 			iv = int(i64)
 		case string:
 			iv, _ = strconv.Atoi(v.(string))
 		}
-		assert.Equal(t, i+1, iv)
+		if iv != i+1 {
+			t.Errorf("got %#v expected %#v", iv, i+1)
+		}
 	}
 
-	ma := js.Get("test").Get("array").MustArray()
-	assert.Equal(t, ma, []interface{}{json.Number("1"), "2", json.Number("3")})
+	if ma := js.Get("test").Get("array").MustArray(); !reflect.DeepEqual(ma, []interface{}{json.Number("1"), "2", json.Number("3")}) {
+		t.Errorf("got %#v", ma)
+	}
 
 	mm := js.Get("test").Get("arraywithsubs").GetIndex(0).MustMap()
-	assert.Equal(t, mm, map[string]interface{}{"subkeyone": json.Number("1")})
-
-	assert.Equal(t, js.Get("test").Get("bignum").MustInt64(), int64(9223372036854775807))
-	assert.Equal(t, js.Get("test").Get("uint64").MustUint64(), uint64(18446744073709551615))
+	if !reflect.DeepEqual(mm, map[string]interface{}{"subkeyone": json.Number("1")}) {
+		t.Errorf("got %#v", mm)
+	}
+	if n := js.Get("test").Get("bignum").MustInt64(); n != int64(9223372036854775807) {
+		t.Errorf("got %#v", n)
+	}
+	if n := js.Get("test").Get("uint64").MustUint64(); n != uint64(18446744073709551615) {
+		t.Errorf("got %#v", n)
+	}
 }
