@@ -3,7 +3,9 @@ package simplejson
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
+	"strconv"
 )
 
 // returns the current implementation version
@@ -27,15 +29,36 @@ func NewJson(body []byte) (*Json, error) {
 }
 
 // New returns a pointer to a new, empty `Json` object
+// type map
 func New() *Json {
 	return &Json{
 		data: make(map[string]interface{}),
 	}
 }
 
+// NewArray returns a pointer to a new, empty `Json` object
+// type slice
+func NewArray(c int) *Json {
+	return &Json{
+		data: make([]interface{}, 0, c),
+	}
+}
+
+// Wrap returns a pointer to a new, `Json` object
+func Wrap(val interface{}) *Json {
+	return &Json{data: val}
+}
+
 // Interface returns the underlying data
 func (j *Json) Interface() interface{} {
 	return j.data
+}
+
+func (j *Json) Empty() bool {
+	if j.data == nil {
+		return true
+	}
+	return false
 }
 
 // Encode returns its marshaled data as `[]byte`
@@ -53,14 +76,24 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
+// AddArray adds val to the `Json` slice
+// Useful for adding value in a `Json` slice easily.
+func (j *Json) AddArray(val interface{}) error {
+	arr, err := j.Array()
+	if err == nil {
+		j.data = append(arr, val)
+	}
+	return err
+}
+
 // Set modifies `Json` map by `key` and `value`
 // Useful for changing single key/value in a `Json` object easily.
-func (j *Json) Set(key string, val interface{}) {
+func (j *Json) Set(key string, val interface{}) error {
 	m, err := j.Map()
-	if err != nil {
-		return
+	if err == nil {
+		m[key] = val
 	}
-	m[key] = val
+	return err
 }
 
 // SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
@@ -156,6 +189,25 @@ func (j *Json) GetIndex(index int) *Json {
 	return &Json{nil}
 }
 
+// ArrayLen returns a length current slice
+func (j *Json) ArrayLen() int {
+	if a, err := j.Array(); err == nil {
+		return len(a)
+	}
+	return 0
+}
+
+func (j *Json) Len() int {
+	switch j.data.(type) {
+	case []interface{}:
+		return len(j.data.([]interface{}))
+	case map[string]interface{}:
+		return len(j.data.(map[string]interface{}))
+	default:
+		return 0
+	}
+}
+
 // CheckGet returns a pointer to a new `Json` object and
 // a `bool` identifying success or failure
 //
@@ -229,6 +281,26 @@ func (j *Json) StringArray() ([]string, error) {
 		s, ok := a.(string)
 		if !ok {
 			return nil, errors.New("type assertion to []string failed")
+		}
+		retArr = append(retArr, s)
+	}
+	return retArr, nil
+}
+
+func (j *Json) IntArray() ([]int, error) {
+	arr, err := j.Array()
+	if err != nil {
+		return nil, err
+	}
+	retArr := make([]int, 0, len(arr))
+	for _, a := range arr {
+		if a == nil {
+			retArr = append(retArr, 0)
+			continue
+		}
+		s, err := Wrap(a).Int()
+		if err != nil {
+			return nil, errors.New("type assertion to []int failed")
 		}
 		retArr = append(retArr, s)
 	}
@@ -330,6 +402,25 @@ func (j *Json) MustStringArray(args ...[]string) []string {
 	}
 
 	a, err := j.StringArray()
+	if err == nil {
+		return a
+	}
+
+	return def
+}
+
+func (j *Json) MustIntArray(args ...[]int) []int {
+	var def []int
+
+	switch len(args) {
+	case 0:
+	case 1:
+		def = args[0]
+	default:
+		log.Panicf("MustIntArray() received too many arguments %d", len(args))
+	}
+
+	a, err := j.IntArray()
 	if err == nil {
 		return a
 	}
@@ -455,4 +546,52 @@ func (j *Json) MustUint64(args ...uint64) uint64 {
 	}
 
 	return def
+}
+
+// ToString type cast to `string`
+func (j *Json) ToString() string {
+	switch j.data.(type) {
+	case string:
+		return j.data.(string)
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
+		return fmt.Sprintf("%d", j.data)
+	case float32, float64:
+		return fmt.Sprintf("%f", j.data)
+	case bool:
+		return fmt.Sprintf("%t", j.data)
+	}
+	return ""
+}
+
+// ToInt type cast to `int`
+func (j *Json) ToInt() int {
+	var v int
+	switch j.data.(type) {
+	case bool:
+		if j.data.(bool) {
+			v = 1
+		}
+	case string:
+		v, _ = strconv.Atoi(j.data.(string))
+	default:
+		v, _ = j.Int()
+	}
+	return v
+}
+
+// ToBool type cast to `bool`
+func (j *Json) ToBool() bool {
+	switch j.data.(type) {
+	case bool:
+		return j.data.(bool)
+	case string:
+		if j.data.(string) == "true" {
+			return true
+		}
+	default:
+		if j.ToInt() != 0 {
+			return true
+		}
+	}
+	return false
 }
