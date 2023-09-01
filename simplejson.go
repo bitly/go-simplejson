@@ -3,6 +3,7 @@ package simplejson
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
 )
 
@@ -12,7 +13,39 @@ func Version() string {
 }
 
 type Json struct {
-	data interface{}
+	data   interface{}
+	reader *Reader
+}
+
+// Keeps the JSON's bytes and the reader index
+type Reader struct {
+	s []byte // JSON's bytes
+	i int64  // current reading index
+}
+
+// Implements the io.Reader interface.
+func (j *Json) Read(b []byte) (int, error) {
+	if j.reader == nil {
+		bytes, err := j.Encode()
+		if err != nil {
+			return 0, err
+		}
+
+		j.reader = &Reader{s: bytes, i: 0}
+	}
+
+	if len(b) == 0 {
+		return 0, nil
+	}
+
+	if j.reader.i > int64(len(j.reader.s)) {
+		return 0, io.EOF
+	}
+
+	n := copy(b, j.reader.s[j.reader.i:])
+	j.reader.i += int64(n)
+
+	return n, nil
 }
 
 // NewJson returns a pointer to a new `Json` object
@@ -28,9 +61,7 @@ func NewJson(body []byte) (*Json, error) {
 
 // New returns a pointer to a new, empty `Json` object
 func New() *Json {
-	return &Json{
-		data: make(map[string]interface{}),
-	}
+	return &Json{data: make(map[string]interface{}), reader: nil}
 }
 
 // Interface returns the underlying data
@@ -61,11 +92,14 @@ func (j *Json) Set(key string, val interface{}) {
 		return
 	}
 	m[key] = val
+	j.reader = nil // JSON changed, reset reader
 }
 
 // SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
 // and then finally writing in the value
 func (j *Json) SetPath(branch []string, val interface{}) {
+	j.reader = nil // JSON changed, reset reader
+
 	if len(branch) == 0 {
 		j.data = val
 		return
@@ -109,6 +143,7 @@ func (j *Json) Del(key string) {
 		return
 	}
 	delete(m, key)
+	j.reader = nil // JSON changed, reset reader
 }
 
 // Get returns a pointer to a new `Json` object
@@ -121,10 +156,10 @@ func (j *Json) Get(key string) *Json {
 	m, err := j.Map()
 	if err == nil {
 		if val, ok := m[key]; ok {
-			return &Json{val}
+			return &Json{data: val, reader: nil}
 		}
 	}
-	return &Json{nil}
+	return &Json{data: nil, reader: nil}
 }
 
 // GetPath searches for the item as specified by the branch
@@ -150,10 +185,10 @@ func (j *Json) GetIndex(index int) *Json {
 	a, err := j.Array()
 	if err == nil {
 		if len(a) > index {
-			return &Json{a[index]}
+			return &Json{data: a[index], reader: nil}
 		}
 	}
-	return &Json{nil}
+	return &Json{data: nil, reader: nil}
 }
 
 // CheckGet returns a pointer to a new `Json` object and
@@ -168,7 +203,7 @@ func (j *Json) CheckGet(key string) (*Json, bool) {
 	m, err := j.Map()
 	if err == nil {
 		if val, ok := m[key]; ok {
-			return &Json{val}, true
+			return &Json{data: val, reader: nil}, true
 		}
 	}
 	return nil, false
