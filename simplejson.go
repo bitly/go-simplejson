@@ -456,3 +456,14 @@ func (j *Json) MustUint64(args ...uint64) uint64 {
 
 	return def
 }
+
+//return len of j when j is array or map,it is useful when handle json rpcs
+func (j *Json) Len() (int, error) {
+    if array, err := j.Array(); err == nil {
+        return len(array), nil
+    }
+    if m, err := j.Map(); err == nil {
+        return len(m), nil
+    }
+    return -1, errors.New("not array or map.")
+}
