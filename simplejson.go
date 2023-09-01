@@ -33,6 +33,26 @@ func New() *Json {
 	}
 }
 
+// IsArray returns whether the data is JsonArray
+func (j *Json) IsArray() bool {
+	switch j.data.(type) {
+	case []interface{}:
+		return true
+	default:
+		return false
+	}
+}
+
+// IsObject returns whether the data is JsonObject
+func (j *Json) IsObject() bool {
+	switch j.data.(type) {
+	case map[string]interface{}:
+		return true
+	default:
+		return false
+	}
+}
+
 // Interface returns the underlying data
 func (j *Json) Interface() interface{} {
 	return j.data
