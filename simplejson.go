@@ -53,6 +53,23 @@ func (j *Json) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&j.data)
 }
 
+// unwrapJSON stores the underlying payload when val is a Json wrapper.
+// Get() wraps map values in a new Json; leaving a *Json in the map would
+// make nested Get/Map fail because they type-assert to map[string]interface{}.
+func unwrapJSON(val interface{}) interface{} {
+	switch v := val.(type) {
+	case *Json:
+		if v == nil {
+			return nil
+		}
+		return v.data
+	case Json:
+		return v.data
+	default:
+		return val
+	}
+}
+
 // Set modifies `Json` map by `key` and `value`
 // Useful for changing single key/value in a `Json` object easily.
 func (j *Json) Set(key string, val interface{}) {
@@ -60,12 +77,13 @@ func (j *Json) Set(key string, val interface{}) {
 	if err != nil {
 		return
 	}
-	m[key] = val
+	m[key] = unwrapJSON(val)
 }
 
 // SetPath modifies `Json`, recursively checking/creating map keys for the supplied path,
 // and then finally writing in the value
 func (j *Json) SetPath(branch []string, val interface{}) {
+	val = unwrapJSON(val)
 	if len(branch) == 0 {
 		j.data = val
 		return

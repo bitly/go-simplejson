@@ -221,6 +221,48 @@ func TestSet(t *testing.T) {
 	}
 }
 
+func TestSetJsonValue(t *testing.T) {
+	xx, err := NewJson([]byte(`{"name": "Alice"}`))
+	if err != nil {
+		t.Fatalf("err %#v", err)
+	}
+
+	yy := New()
+	yy.Set("Contact", xx)
+	s, err := yy.Get("Contact").Get("name").String()
+	if err != nil {
+		t.Fatalf("err %#v", err)
+	}
+	if s != "Alice" {
+		t.Errorf("got %#v", s)
+	}
+
+	yy2 := New()
+	yy2.Set("Contact", xx.Interface())
+	s, err = yy2.Get("Contact").Get("name").String()
+	if err != nil {
+		t.Fatalf("err %#v", err)
+	}
+	if s != "Alice" {
+		t.Errorf("got %#v", s)
+	}
+
+	yy.SetPath([]string{"nested", "contact"}, xx)
+	s, err = yy.GetPath("nested", "contact", "name").String()
+	if err != nil {
+		t.Fatalf("err %#v", err)
+	}
+	if s != "Alice" {
+		t.Errorf("got %#v", s)
+	}
+
+	var n *Json
+	yy.Set("empty", n)
+	if yy.Get("empty").Interface() != nil {
+		t.Errorf("nil *Json should store nil, got %#v", yy.Get("empty").Interface())
+	}
+}
+
 func TestReplace(t *testing.T) {
 	js, err := NewJson([]byte(`{}`))
 	if err != nil {
