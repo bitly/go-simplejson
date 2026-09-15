@@ -1,8 +1,10 @@
 package simplejson
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
 )
 
@@ -16,11 +18,19 @@ type Json struct {
 }
 
 // NewJson returns a pointer to a new `Json` object
-// after unmarshaling `body` bytes
+// after unmarshaling `body` bytes. Extra tokens after the first
+// JSON value are rejected (json.Unmarshal would ignore them).
 func NewJson(body []byte) (*Json, error) {
 	j := new(Json)
-	err := j.UnmarshalJSON(body)
-	if err != nil {
+	dec := json.NewDecoder(bytes.NewBuffer(body))
+	dec.UseNumber()
+	if err := dec.Decode(&j.data); err != nil {
+		return nil, err
+	}
+	if _, err := dec.Token(); err != io.EOF {
+		if err == nil {
+			return nil, errors.New("invalid trailing data after JSON value")
+		}
 		return nil, err
 	}
 	return j, nil

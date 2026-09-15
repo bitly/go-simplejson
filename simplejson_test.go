@@ -341,3 +341,25 @@ func TestPathWillOverwriteExisting(t *testing.T) {
 		t.Errorf("got %#v", s)
 	}
 }
+
+func TestNewJsonRejectsTrailingData(t *testing.T) {
+	// Issue #91: a quoted-prefix + extra tokens used to parse as the string "{".
+	body := `"{"client_id":"abc123","client_ip":"59.37.125.15","client_version":"1"}"`
+	js, err := NewJson([]byte(body))
+	if err == nil {
+		t.Fatalf("expected error, got %#v", js.Interface())
+	}
+
+	js, err = NewJson([]byte(`{"a":1}{"b":2}`))
+	if err == nil {
+		t.Fatalf("expected error for second JSON value, got %#v", js.Interface())
+	}
+
+	js, err = NewJson([]byte("{\"a\":1}\n  "))
+	if err != nil {
+		t.Fatalf("trailing whitespace should be ok: %v", err)
+	}
+	if v, _ := js.Get("a").Int(); v != 1 {
+		t.Errorf("got %#v", v)
+	}
+}
