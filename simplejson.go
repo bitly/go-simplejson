@@ -149,7 +149,7 @@ func (j *Json) GetPath(branch ...string) *Json {
 func (j *Json) GetIndex(index int) *Json {
 	a, err := j.Array()
 	if err == nil {
-		if len(a) > index {
+		if index >= 0 && index < len(a) {
 			return &Json{a[index]}
 		}
 	}
