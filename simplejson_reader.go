@@ -44,7 +44,7 @@ func (j *Json) Float64() (float64, error) {
 func (j *Json) Int() (int, error) {
 	switch j.data.(type) {
 	case json.Number:
-		i, err := j.data.(json.Number).Int64()
+		i, err := strconv.ParseInt(j.data.(json.Number).String(), 10, strconv.IntSize)
 		return int(i), err
 	case float32, float64:
 		return int(reflect.ValueOf(j.data).Float()), nil
