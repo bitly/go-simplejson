@@ -258,6 +258,35 @@ func TestSetPath(t *testing.T) {
 	}
 }
 
+func TestSetPathNilMaps(t *testing.T) {
+	var nilMap map[string]interface{}
+	cases := []struct {
+		name string
+		data interface{}
+		path []string
+		want string
+	}{
+		{"root", nilMap, []string{"value"}, `{"value":"set"}`},
+		{"root_nested_path", nilMap, []string{"child", "value"}, `{"child":{"value":"set"}}`},
+		{"child", map[string]interface{}{"child": nilMap, "keep": true}, []string{"child", "value"}, `{"child":{"value":"set"},"keep":true}`},
+		{"intermediate", map[string]interface{}{"child": nilMap, "keep": true}, []string{"child", "nested", "value"}, `{"child":{"nested":{"value":"set"}},"keep":true}`},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			js := New()
+			js.SetPath(nil, tc.data)
+			js.SetPath(tc.path, "set")
+			if got, err := js.GetPath(tc.path...).String(); err != nil || got != "set" {
+				t.Fatalf("GetPath: got %q, %v", got, err)
+			}
+			got, err := js.Encode()
+			if err != nil || string(got) != tc.want {
+				t.Fatalf("Encode: got %s, %v; want %s", got, err, tc.want)
+			}
+		})
+	}
+}
+
 func TestSetPathNoPath(t *testing.T) {
 	js, err := NewJson([]byte(`{"some":"data","some_number":1.0,"some_bool":false}`))
 	if err != nil {

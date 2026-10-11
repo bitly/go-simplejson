@@ -72,7 +72,7 @@ func (j *Json) SetPath(branch []string, val interface{}) {
 	}
 
 	// in order to insert our branch, we need map[string]interface{}
-	if _, ok := (j.data).(map[string]interface{}); !ok {
+	if m, ok := (j.data).(map[string]interface{}); !ok || m == nil {
 		// have to replace with something suitable
 		j.data = make(map[string]interface{})
 	}
@@ -89,7 +89,7 @@ func (j *Json) SetPath(branch []string, val interface{}) {
 		}
 
 		// make sure the value is the right sort of thing
-		if _, ok := curr[b].(map[string]interface{}); !ok {
+		if m, ok := curr[b].(map[string]interface{}); !ok || m == nil {
 			// have to replace with something suitable
 			n := make(map[string]interface{})
 			curr[b] = n
